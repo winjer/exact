@@ -33,33 +33,35 @@ pidfile			@localstatedir@/run/exact/exact.pid
 maillog			@ac_cv_watch@
 
 #
-# order: the order of parameters in the following match expression.
+# order and match: specify how lines are to be matched in the maillog
 #
-# valid values are "username,address" or "address,username"
+# These will vary depending upon your POP/IMAP server.  Uncomment the 
+# appropriate pair for your server.
 #
-# uw-imapd, courier:
-order           username,address
-# 
-# cyrus or perdition:
+# UW-IMAPD
+# ========
+# order           username,address
+# match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]$
+#
+# Courier
+# =======
+# order           username,address
+# match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
+#
+# Cyrus
+# =====
 # order           address,username
-
-#
-# match: the regular expression used to identify the user and ip address to
-# authenticate.
-#
-# uw-imapd:
-match			(Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]$
-#
-# cyrus:
 # match           (login): \[([0-9\.]*)\] ([^ ]*)
 #
-# perdition:
+# Perdition
+# =========
+# order           address,username
 # match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
-
-# courier
-# match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
-
-
+#
+# Qpopper
+# =======
+# order           username,address
+# match           (login) by user \"(.*)\" at \([^ ]*\) (.*) \[[^ ]*\]
 
 #
 # authfile: the file the ip addresses to allow relay for are written to
