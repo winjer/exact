@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.9 2003/01/24 15:46:41 doug Exp $
+# $Id: configure.ac,v 1.10 2003/01/26 17:17:14 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -44,7 +44,7 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([syslog.h])
+AC_CHECK_HEADERS([syslog.h] [getopt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 

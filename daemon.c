@@ -1,4 +1,4 @@
-/* $Id: daemon.c,v 1.8 2003/01/26 11:47:36 doug Exp $
+/* $Id: daemon.c,v 1.9 2003/01/26 17:17:14 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -42,7 +42,7 @@ void dofork(int s) {
 		case 0: // we are the child
 			if(s) {
 				fprintf(stderr, "Child sleeping - attach gdb to %d\n", 
-						getpid());
+						(int)getpid());
 				sleep(10);
 			}
 			break;

@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.10 2003/01/26 11:47:36 doug Exp $
+/* $Id: exact.c,v 1.11 2003/01/26 17:17:14 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -18,15 +18,20 @@
  *
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <regex.h>
-#include <getopt.h>
 #include <assert.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/stat.h>
+
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif
 
 #include "tail.h"
 #include "logger.h"
@@ -134,14 +139,9 @@ void exit_handler(int s) {
 }
 
 int main(int argc, char *argv[]) {
-	char cfile[1024];
 	cmdline(argc,argv);
 	logger_init(0,cmd.debug);
-	sprintf(cfile, "%s/exact.conf", CONFDIR);
-	if(!conffile_read(cfile)) {
-		fprintf(stderr, "Could not read configuration file %s\n", cfile);
-		exit(43);
-	}
+	conffile_read();
 	conffile_check();
 	checkpid();
 	auth_init();
@@ -155,8 +155,9 @@ int main(int argc, char *argv[]) {
 	logger(LOG_DEBUG, "daemonized");
 	writepid();
 	auth_write(); // so that the file exists
-	signal(15,exit_handler);
+	signal(1,conffile_reload);
 	signal(10,auth_dump);
+	signal(15,exit_handler);
 	if(!tail_open()) {
 		logger(LOG_ERR,"tail open failed.  Quitting.\n");
 		return 2;

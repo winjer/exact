@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.14 2003/01/26 15:17:18 doug Exp $
+# $Id: Makefile.in,v 1.15 2003/01/26 17:17:14 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -46,19 +46,20 @@ groupname = @ac_cv_group@
 watchfile = @ac_cv_watch@
 
 SOURCES = tail.c daemon.c exact.c logger.c match.c auth.c conffile.c
-DOCS = exact.8
 MISC = configure mkinstalldirs install-sh aclocal.m4
 OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o
 
-all: exact exact.conf exact.8 README.html
+all: exact exact.conf exact.8 exact.conf.5 README.html
 
 install: all
-	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact $(localstatedir)/state/exact $(mandir)/man8
+	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact \
+		$(localstatedir)/state/exact $(mandir)/man8 $(mandir)/man5
 	chown $(username) $(localstatedir)/run/exact $(localstatedir)/state/exact
 	chgrp $(groupname) $(localstatedir)/run/exact $(localstatedir)/state/exact
 	$(INSTALL) exact $(sbindir)/exact
 	$(INSTALL) exact.conf $(sysconfdir)/exact.conf
 	$(INSTALL) exact.8 $(mandir)/man8
+	$(INSTALL) exact.conf.5 $(mandir)/man5
 
 uninstall:
 	/bin/rm -f $(bindir)/exact
@@ -72,7 +73,7 @@ clean:
 distclean: clean
 	/bin/rm -f Makefile config.h config.status config.cache config.log
 	/bin/rm -f configure autoscan.log configure.scan
-	/bin/rm -rf autom4te.cache config.h.in~
+	/bin/rm -rf autom4te.cache config.h.in~ README.html
 
 mostlyclean: clean
 
@@ -90,7 +91,12 @@ exact.conf: exact.conf.in Makefile
 	rm -f exact.conf exact.conf.tmp
 	$(edit) exact.conf.in > exact.conf.tmp
 	 mv exact.conf.tmp exact.conf
-	
+
+exact.conf.5: exact.conf.5.in
+	rm -f exact.conf.5 exact.conf.5.tmp
+	$(edit) exact.conf.5.in > exact.conf.5.tmp
+	mv exact.conf.5.tmp exact.conf.5
+
 exact.8: exact.8.in
 	rm -f exact.8 exact.8.tmp
 	$(edit) exact.8.in > exact.8.tmp

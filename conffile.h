@@ -1,4 +1,4 @@
-/* $Id: conffile.h,v 1.4 2003/01/24 15:32:24 doug Exp $
+/* $Id: conffile.h,v 1.5 2003/01/26 17:17:14 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -18,8 +18,8 @@
  *
  */
 
-int conffile_read(char *filename);
-
+void conffile_read();
 char *conffile_param(char *name);
 int conffile_param_int(char *name);
 void conffile_check();
+void conffile_reload(int);

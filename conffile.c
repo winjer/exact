@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.7 2003/01/26 11:47:36 doug Exp $
+/* $Id: conffile.c,v 1.8 2003/01/26 17:17:14 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -26,6 +26,7 @@
  * ('#') symbol.
  */
 
+#include <signal.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <regex.h>
@@ -53,6 +54,23 @@ void zap_comments(char *s) {
 	}
 }
 
+void conffile_free() {
+	int i;
+	for(i=0;i<param_max;++i) {
+		free(param[i].name);
+		free(param[i].value);
+	}
+	param_max=0;
+}
+
+void conffile_reload(int s) {
+	conffile_free();
+	conffile_read();
+	conffile_check();
+	logger(LOG_NOTICE, "configuration file reloaded");
+	signal(1,conffile_reload);
+}
+
 void conffile_check() {
 	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile","authtemp"};
 	char *required_i[]={"timeout","flush","suspicious"};
@@ -77,16 +95,21 @@ void conffile_check() {
 	logger(LOG_DEBUG, "checking configuration file finished\n");
 }
 
-int conffile_read(char *filename) {
+void conffile_read() {
 	FILE *f;
 	char s[1024];
+	char filename[2048]; // arbitrary size of buffer, naughty
 	regex_t rx;
 	regmatch_t pm[16];
 
+	sprintf(filename, "%s/exact.conf", CONFDIR);
 	regcomp(&rx,"\\([^\t ]*\\)[ \t]*\\(.*\\)",0);
 	logger(LOG_DEBUG, "Opening configuration file %s\n", filename);
 	f=fopen(filename,"r");
-	if(!f) return 0;
+	if(!f) {
+		logger(LOG_ERR, "Cannot read configuration file %s\n", filename);
+		exit(5);
+	}
 	while(fgets(s,1023,f)!=NULL) {
 		s[strlen(s)-1]='\0';
 		logger(LOG_DEBUG, "Read from conf file: %s\n", s);
@@ -107,7 +130,6 @@ int conffile_read(char *filename) {
 	}
 	fclose(f);
 	logger(LOG_DEBUG,"Finished reading configuration file\n");
-	return 1;
 }
 
 char *conffile_param(char *name) {

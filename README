@@ -5,7 +5,7 @@ README for EXACT
 :Version: 1.0
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/01/26 15:17:18 $
+:Date: $Date: 2003/01/26 17:17:14 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -69,6 +69,13 @@ are cleaned from this file.
 
 Your MTA can then be configured to read this file, to determine hosts that are
 allowed to relay.
+
+Where do I download EXACT?
+==========================
+
+The current version of EXACT is 1.00 and is available from the `ftp site`_.
+
+.. _`ftp site`: ftp://www.britishsteal.com/exact/
 
 What other software does this?
 ==============================
