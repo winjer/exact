@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.11 2004/03/27 13:14:47 doug Exp $
+/* $Id: auth.c,v 1.12 2004/03/27 18:01:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -194,7 +194,7 @@ void closedb(int sig) {
 
 void opendb() {
     int ret;
-    int db_flags = DB_CREATE;
+    int db_flags = DB_CREATE | DB_INIT_CDB;
     int dbtype = DB_HASH;
     char *db_path = conffile_param("authfile");
 
@@ -237,8 +237,6 @@ void auth_db_add(char *username, char *hostname) {
     int ret;
     time_t now;
 
-    if(!db)
-        opendb();
     memset(&data, 0, sizeof(data));
     key = hostname_key(hostname);
     now = time(NULL);
@@ -250,14 +248,16 @@ void auth_db_add(char *username, char *hostname) {
         db->err(db, ret, "writing hostname");
         exit(22);
     }
+    if((ret = db->sync(db, 0)) != 0) {
+        db->err(db, ret, "syncing database");
+        exit(23);
+    }
 }
 
 void auth_db_delete(char *hostname) {
     int ret;
     DBT key;
 
-    if(!db)
-        opendb();
     key = hostname_key(hostname);
     if((ret = db->del(db, NULL, &key, 0)) != 0) {
         db->err(db, ret, "deleting hostname");
@@ -282,15 +282,40 @@ void auth_add(char *username, char *hostname) {
 #endif
 }
 
-/* auth_clean: remove entries that have expired.  this is done by selectively
+void auth_db_clean(int sig) {
+    DBC *dbc;
+    DBT key, data;
+    int ret;
+    time_t now=time(NULL);
+    time_t max=(time_t)conffile_param_int("timeout");
+
+    logger(LOG_NOTICE, "cleaning db file\n");
+    // apparently i should use DB_WRITECURSOR as a flag here
+    // but the version 3 db barfs on me when i do that
+    if((ret = db->cursor(db, NULL, &dbc, 0)) != 0) {
+        db->err(db, ret, "opening cursor");
+        exit(22);
+    }
+    memset(&key, 0, sizeof(key));
+    memset(&data, 0, sizeof(data));
+    while((ret = dbc->c_get(dbc, &key, &data, DB_NEXT)) ==0) {
+        time_t then = (time_t)data.data;
+        if(now - then > max) {
+            if((ret = dbc->c_del(dbc, 0)) != 0) {
+                db->err(db, ret, "deleting key");
+                exit(22);
+            }
+        }
+    }
+    logger(LOG_DEBUG,"Finished cleaning cycle\n");
+}
+
+
+/* auth_clean_text: remove entries that have expired.  this is done by selectively
  * copying entries to the shadow buffer, then swapping buffers.
  *
  * this process is triggered by the reception of a SIGALRM.  
  */
-
-void auth_db_clean(int sig) {
-}
-
 void auth_text_clean(int sig) {
     int i;
     auth_entry *tmp;
@@ -336,6 +361,7 @@ void auth_clean(int sig) {
 void auth_init() {
     logger(LOG_DEBUG, "initialising authentication tables\n");
     auth_init_mem();
+    opendb();
     auth_alarm=conffile_param_int("flush");
     signal(14, auth_clean);
     alarm(auth_alarm);

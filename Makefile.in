@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.23 2004/03/27 13:05:10 doug Exp $
+# $Id: Makefile.in,v 1.24 2004/03/27 18:01:15 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -49,9 +49,11 @@ server = @ac_cv_server@
 db = @ac_cv_db@
 
 ifeq ($(db),yes)
-	LIBS=@LIBS@ -ldb-4
+	LIBS=@LIBS@ -ldb
+	authtype=db
 else
 	LIBS = @LIBS@
+	authtype=text
 endif
 
 SOURCES = tail.c daemon.c exact.c logger.c match.c auth.c conffile.c getopt.c getopt1.c apconf.c
@@ -102,6 +104,7 @@ edit = sed \
 		-e 's,@ac_cv_group\@,$(groupname),g' \
 		-e 's,@ac_cv_watch\@,$(watchfile),g' \
 		-e 's,@ac_cv_server\@,${server},g' \
+		-e 's,@ac_cv_authtype\@,${authtype},g' \
 		-e 's,@logging\@,syslog,g' \
 		-e 's,@timeout\@,1800,g' \
 		-e 's,@flush\@,300,g' \

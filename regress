@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: regress,v 1.5 2004/03/27 13:14:47 doug Exp $
+# $Id: regress,v 1.6 2004/03/27 18:01:15 doug Exp $
 # regression test sets for EXACT
 # note: this script isn't portable, and may blow up on you.
 #       it's really designed for my own regression tests.
@@ -55,7 +55,6 @@ report() {
         echo Test $1 Succeeded
     else
         echo Test $1 Failed
-        exit
     fi
 }
 
