@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.10 2004/03/27 13:05:10 doug Exp $
+/* $Id: auth.c,v 1.11 2004/03/27 13:14:47 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -245,6 +245,7 @@ void auth_db_add(char *username, char *hostname) {
     data.data = &now;
     data.size = sizeof(time_t);
     logger(LOG_DEBUG, "Berkeley DB: %s -> %d\n", hostname, now);
+    logger(LOG_NOTICE, "authorising %s at %s\n", username, hostname);
     if((ret = db->put(db, NULL, &key, &data, 0)) != 0) {
         db->err(db, ret, "writing hostname");
         exit(22);

@@ -36,6 +36,14 @@ serverdefs      @sysconfdir@/exact-servers.conf
 
 server          cyrus
 
+
+#
+# authtype: either 'db' or 'text'.  'db' is only valid if you have compiled
+# in berkeley database support (the --with-db switch to configure)
+#
+authtype        @ac_cv_authtype@
+
+
 #
 # authfile: the file the ip addresses to allow relay for are written to
 #

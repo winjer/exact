@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: regress,v 1.4 2004/03/27 13:05:10 doug Exp $
+# $Id: regress,v 1.5 2004/03/27 13:14:47 doug Exp $
 # regression test sets for EXACT
 # note: this script isn't portable, and may blow up on you.
 #       it's really designed for my own regression tests.
@@ -65,11 +65,12 @@ killexact () {
 
 runexact () {
     touch $watchfile
+    rm $localstatedir/state/exact/relay
     if [ "$DEBUG" ]; then
         echo run -fdc $regdir/reg.conf > gdb-commands
         gdb ./exact -x gdb-commands &
     else
-        ./exact -fdc $regdir/reg.conf &
+        ./exact -c $regdir/reg.conf &
     fi
     sleep 2
     pid=`cat $regdir/run/exact/exact.pid`
@@ -85,6 +86,7 @@ runexact () {
 
 test1 () {
     echo Starting Test 1
+    authtype=text
     cleanroom
     runexact
     cat "td1-1" > $watchfile
@@ -98,6 +100,7 @@ test1 () {
 
 test1a () {
     echo Starting Test 1a
+    authtype=text
     cleanroom
     mkconfig exact.conf.in.cyrus
     runexact
@@ -114,6 +117,7 @@ test1a () {
 
 test2 () {
     echo Starting Test 2
+    authtype=text
     cleanroom
     runexact
     cat "td2-1" > $watchfile
@@ -127,6 +131,7 @@ test2 () {
 
 test3 () {
     echo Starting Test 3
+    authtype=text
     cleanroom
     ./exact -pc $regdir/reg.conf
     sleep 2
@@ -143,6 +148,7 @@ test3 () {
 
 test4 () {
     echo Starting Test 4
+    authtype=text
     cleanroom
     rm -f $watchfile
     ./exact -pc $regdir/reg.conf
@@ -165,11 +171,10 @@ test5 () {
     report 5
 }
 
-test5
-exit
-test4
 test1
 test1a
 test2
 test3
+test4
+test5
 
