@@ -1,5 +1,22 @@
-// $Id: exact.c,v 1.7 2003/01/24 13:59:45 doug Exp $
-//
+/* $Id: exact.c,v 1.8 2003/01/24 15:28:50 doug Exp $
+ * 
+ * This file is part of EXACT.
+ *
+ * EXACT is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +54,7 @@ int onepass() {
 		if(tail_buff[i]=='\n' || tail_buff[i]=='\0') {
 			tail_buff[i]='\0';
 			l=match_line(tail_buff+start);
-			if(l) auth_add(l->username, l->ip);				
+			if(l) auth_add(l->username, l->hostname);
 			start=i+1;
 		}
 	}
@@ -73,7 +90,7 @@ void cmdline(int argc, char *argv[]) {
 				break;
 			default:
 				fprintf(stderr, "Unknown argument: %c\n",c);
-				exit(2);
+				exit(40);
 				break;
 		}
 	}
@@ -90,7 +107,7 @@ void checkpid() {
 			int kr=kill(opid,0);
 			if(kr	!= -1) {
 				logger(LOG_ERR, "Exact is already running, with pid %d\n", opid);
-				exit(5);
+				exit(41);
 			}
 		}
 	}
@@ -100,7 +117,7 @@ void writepid() {
 	FILE *f=fopen(conffile_param("pidfile"),"w");
 	if(!f) {
 		logger(LOG_ERR, "Cannot write to pid file %s\n", conffile_param("pidfile"));
-		exit(2);
+		exit(42);
 	}
 	chmod(conffile_param("pidfile"),0640);
 	logger(LOG_DEBUG, "Writing pid to %s\n", conffile_param("pidfile"));
@@ -122,7 +139,7 @@ int main(int argc, char *argv[]) {
 	sprintf(cfile, "%s/exact.conf", CONFDIR);
 	if(!conffile_read(cfile)) {
 		fprintf(stderr, "Could not read configuration file %s\n", cfile);
-		exit(6);
+		exit(43);
 	}
 	conffile_check();
 	checkpid();

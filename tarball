@@ -1,0 +1,24 @@
+#!/bin/sh
+# build a distro tarball for exact
+
+if [ "$#" != "1" ]
+then
+	echo usage: tarball version
+	exit
+fi
+
+version=$1
+
+tmpdir=/tmp/$$
+builddir=$tmpdir/exact-$version
+
+echo building in $builddir
+
+mkdir -p $builddir
+
+SRCS="*.c *.h Makefile.in configure install-sh mkinstalldirs config.h.in exact.8.in exact.conf.in"
+
+cp $SRCS $builddir/
+( cd $tmpdir && tar -czf exact-$version.tar.gz exact-$version )
+mv $tmpdir/exact-$version.tar.gz .
+rm -rf $tmpdir

@@ -1,5 +1,22 @@
-/* $Id: match.c,v 1.3 2003/01/24 13:59:45 doug Exp $
-*/
+/* $Id: match.c,v 1.4 2003/01/24 15:28:50 doug Exp $
+ * 
+ * This file is part of EXACT.
+ *
+ * EXACT is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #include <sys/types.h>
 #include <regex.h>
@@ -44,14 +61,14 @@ match_login *match_line(char *buff) {
 						MATCH_LOGIN_USERNAME_MAX ?
 						MATCH_LOGIN_USERNAME_MAX :
 						r[1].rm_eo-r[1].rm_so)]=0;
-			strncpy(l.ip,buff+r[2].rm_so,
+			strncpy(l.hostname,buff+r[2].rm_so,
 					r[2].rm_eo-r[2].rm_so > 
-						MATCH_LOGIN_IP_MAX ? 
-						MATCH_LOGIN_IP_MAX : 
+						MATCH_LOGIN_HOSTNAME_MAX ? 
+						MATCH_LOGIN_HOSTNAME_MAX : 
 						r[2].rm_eo-r[2].rm_so);
-			l.ip[(r[2].rm_eo-r[2].rm_so >
-						MATCH_LOGIN_IP_MAX ?
-						MATCH_LOGIN_IP_MAX :
+			l.hostname[(r[2].rm_eo-r[2].rm_so >
+						MATCH_LOGIN_HOSTNAME_MAX ?
+						MATCH_LOGIN_HOSTNAME_MAX :
 						r[2].rm_eo-r[2].rm_so)]=0;
 			return(&l);
 			break;
@@ -60,7 +77,7 @@ match_login *match_line(char *buff) {
 			break;
 		case REG_ESPACE:
 			logger(LOG_ERR, "Out of space while matching\n");
-			exit(2);
+			exit(50);
 		default:
 			assert(0);
 			break;

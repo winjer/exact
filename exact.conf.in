@@ -36,15 +36,20 @@ maillog			@ac_cv_watch@
 # match: the regular expression used to identify the user and ip address to
 # authenticate.
 #
-# The first bracketed expression should be the username, and the second should
-# be the ip address.  This is standard POSIX regular expression.
+# The first bracketed expression should be the username and the second the hostname. 
 #
-match			Login user=\([^ ]*\).*\[\(.*\)\]
+match			Login user=\([^ ]*\).*host=\([^ ]*\)
 
 #
 # authfile: the file the ip addresses to allow relay for are written to
 #
 authfile		@localstatedir@/state/exact/relay
+
+#
+# authtemp: a temporary file for writing the relay data to.  This is then moved
+# to "authfile" atomically, to avoid race conditions.  This should be on the
+# same disk as "authfile".
+authtemp		@localstatedir@/state/exact/relay.tmp
 
 #
 # dumpfile: if you send the exact process a SIGUSR1, it will dump it's state 

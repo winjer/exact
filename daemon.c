@@ -1,4 +1,22 @@
-// $Id: daemon.c,v 1.5 2003/01/24 13:59:45 doug Exp $
+/* $Id: daemon.c,v 1.6 2003/01/24 15:28:50 doug Exp $
+ * 
+ * This file is part of EXACT.
+ *
+ * EXACT is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,7 +37,7 @@ void dofork(int s) {
 	switch(p) {
 		case -1: // error
 			logger(LOG_ERR, "Fatal Error when forking\n");
-			exit(2);
+			exit(61);
 			break;
 		case 0: // we are the child
 			if(s) {
@@ -39,7 +57,7 @@ void sesslead() {
 	pid_t p=setsid();
 	if(p==-1) {
 		logger(LOG_ERR, "Fatal Error while running setsid\n");
-		exit(2);
+		exit(62);
 	}
 }
 
@@ -48,7 +66,7 @@ void rootdir() {
 	ret=chdir("/");
 	if(ret==-1) {
 		logger(LOG_ERR, "Fatal Error while changing to root dir\n");
-		exit(2);
+		exit(63);
 	}
 }
 
@@ -64,12 +82,12 @@ void usergroup() {
 		if(g) {
 			if(setgid(g->gr_gid)) {
 				logger(LOG_CRIT, "unable to change gid to %d\n", g->gr_gid);
-				exit(8);
+				exit(64);
 			}
 			setegid(g->gr_gid);
 		} else {
 			logger(LOG_CRIT, "group %d does not exist\n", conffile_param("group"));
-			exit(8);
+			exit(65);
 		}
 	}
 	if(conffile_param("user")) {
@@ -77,12 +95,12 @@ void usergroup() {
 		if(p) {
 			if(setuid(p->pw_uid)) {
 				logger(LOG_CRIT, "unable to change uid to %d\n", p->pw_uid);
-				exit(8);
+				exit(66);
 			}
 			seteuid(p->pw_uid);
 		} else {
 			logger(LOG_CRIT, "user %s does not exist\n", conffile_param("user"));
-			exit(8);
+			exit(67);
 		}
 	}
 }

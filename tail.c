@@ -1,8 +1,22 @@
-/* $Id: tail.c,v 1.5 2003/01/24 13:59:45 doug Exp $
+/* $Id: tail.c,v 1.6 2003/01/24 15:28:50 doug Exp $
+ * 
+ * This file is part of EXACT.
  *
- * These functions provide functionality very like that provided
- * in the perl File::Tail module.
-*/
+ * EXACT is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -59,12 +73,12 @@ char *tail_read() {
 	}
 	if(!tail_buff) {
 		logger(LOG_ERR,"unable to realloc %d bytes\n", tail_bufflen);
-		exit(2);
+		exit(30);
 	}
 	read=fread(tail_buff,1,tail_bufflen,f);
 	if(read!=tail_bufflen) {
 		logger(LOG_ERR,"read %d bytes, wanted %d bytes\n", read, tail_bufflen);
-		exit(2);
+		exit(31);
 	}
 	tail_buff[tail_bufflen]='\0'; // zero terminate it, so it can be matched
 	lines=linecount(tail_buff,tail_bufflen);
