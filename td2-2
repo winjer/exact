@@ -1,0 +1,8 @@
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user11 host=a.b.c.d [123.456.789.11]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user12 host=a.b.c.d [123.456.789.12]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user13 host=a.b.c.d [123.456.789.13]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user14 host=a.b.c.d [123.456.789.14]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user15 host=a.b.c.d [123.456.789.15]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user16 host=a.b.c.d [123.456.789.16]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user17 host=a.b.c.d [123.456.789.17]
+Feb 18 14:24:03 stilton imapd[10823]: Login user=user18 host=a.b.c.d [123.456.789.18]

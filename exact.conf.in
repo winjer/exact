@@ -62,18 +62,26 @@ dumpfile		@localstatedir@/state/exact/dump
 # timeout: the number of seconds before an ip address is removed from the relay
 # file.
 #
-timeout			1800
+timeout			@timeout@
 
 #
 # flush: the period, in seconds, between flush cycles.  The daemon checks this
 # often to see if ip addresses should be removed, if they are older than
 # (timeout) seconds.
 #
-flush			300
+flush			@flush@
 
 #
 # suspicious: the time, in seconds, for which an unchanged logfile will trigger 
 # a reopen.  this is designed to detect rotated logfiles.
 #
-suspicious		120
+suspicious		@suspicious@
 
+#
+# logging: either "syslog" or "internal".  defaults to syslog.  if "internal",
+# then logs are written to the file specified by the "logfile" parameter.
+logging			@logging@
+
+#
+# logfile: if logging is internal, the filename of the log file.
+logfile			@localstatedir@/log/exact/exact.log

@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.8 2003/01/26 17:17:14 doug Exp $
+/* $Id: conffile.c,v 1.9 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -44,6 +44,9 @@ typedef struct {
 param_t param[16];
 int param_max=0;
 
+char filename[2048]; //arbitrary length for configuration filename
+int filename_set=0;
+
 void zap_comments(char *s) {
 	while(*s!='\0') {
 		if(*s=='#') {
@@ -72,7 +75,7 @@ void conffile_reload(int s) {
 }
 
 void conffile_check() {
-	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile","authtemp"};
+	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile","authtemp","logging","logfile"};
 	char *required_i[]={"timeout","flush","suspicious"};
 	int i;
 	logger(LOG_DEBUG, "checking configuration file\n");
@@ -95,24 +98,36 @@ void conffile_check() {
 	logger(LOG_DEBUG, "checking configuration file finished\n");
 }
 
+void conffile_setname(char *s) {
+	logger(LOG_NOTICE, "Using configuration file %s\n", s);
+	strncpy(filename,s,2047);
+	filename_set=1;
+}
+
+char *conffile_name() {
+	if(!filename_set) {
+		sprintf(filename, "%s/exact.conf", CONFDIR);
+		filename_set=1;
+	}
+	return filename;
+}
+
 void conffile_read() {
 	FILE *f;
 	char s[1024];
-	char filename[2048]; // arbitrary size of buffer, naughty
 	regex_t rx;
 	regmatch_t pm[16];
 
-	sprintf(filename, "%s/exact.conf", CONFDIR);
 	regcomp(&rx,"\\([^\t ]*\\)[ \t]*\\(.*\\)",0);
-	logger(LOG_DEBUG, "Opening configuration file %s\n", filename);
-	f=fopen(filename,"r");
+	logger(LOG_DEBUG, "Opening configuration file %s\n", conffile_name());
+	f=fopen(conffile_name(),"r");
 	if(!f) {
-		logger(LOG_ERR, "Cannot read configuration file %s\n", filename);
+		logger(LOG_ERR, "Cannot read configuration file %s\n", conffile_name());
 		exit(5);
 	}
 	while(fgets(s,1023,f)!=NULL) {
 		s[strlen(s)-1]='\0';
-		logger(LOG_DEBUG, "Read from conf file: %s\n", s);
+		//logger(LOG_DEBUG, "Read from conf file: %s\n", s);
 		zap_comments(s);
 		
 		if(strlen(s)>0 && regexec(&rx,s,16,pm,0)==0 && 

@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.9 2003/02/14 10:26:40 doug Exp $
+/* $Id: tail.c,v 1.10 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -67,12 +67,13 @@ int linecount(char *buff, int len) {
 
 void tail_reopen(long current) {
 	long end;
-	fclose(f);
+	if(f) fclose(f);
 	logger(LOG_DEBUG,"suspicious about file, reopening\n");
 	f=fopen(conffile_param("maillog"),"r");
 	if(!f) {
-		logger(LOG_NOTICE, "log file has disappeared.\n");
-		exit(73);
+		logger(LOG_NOTICE, "log file '%s' has disappeared.\n",conffile_param("maillog"));
+		f=NULL;
+		return;
 	}
 	fseek(f,0,SEEK_END);
 	end=ftell(f);
@@ -96,7 +97,13 @@ char *tail_read() {
 	size_t read;
 	unsigned int lines;
 
-	logger(LOG_DEBUG, "sleeping for %ld usecs\n", paws);
+	if(f==NULL) {
+		tail_reopen(0);
+		last=time(NULL);
+		tail_bufflen=0;
+        nap(paws);
+		return tail_buff;
+	}
 	nap(paws);
 	current=ftell(f);
 	if(fseek(f,0,SEEK_END)==-1) {

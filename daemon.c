@@ -1,4 +1,4 @@
-/* $Id: daemon.c,v 1.9 2003/01/26 17:17:14 doug Exp $
+/* $Id: daemon.c,v 1.10 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -121,7 +121,7 @@ void daemonize(int f, int s) {
 	rootdir(); // to ensure no directory is kept in use
 	logger(LOG_DEBUG, "setting umask\n");
 	umask(0); // so no weird perms are inherited
-	logger(LOG_DEBUG, "freopening\n");
+	logger(LOG_DEBUG, "freopening stdin, stdout and stderr\n");
 	reopenfds(); // so stdin, stdout and stderr are sensible
 #else
 	// other stuff

@@ -1,4 +1,4 @@
-/* $Id: logger.c,v 1.4 2003/02/14 10:26:40 doug Exp $
+/* $Id: logger.c,v 1.5 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -30,15 +30,26 @@
 #include "logger.h"
 
 int use_syslog=0;
+FILE *lf=NULL;
 int debug=0;
 
-void logger_init(int u, int d) {
+void logger_init(int u, int d, char *logfile) {
 	static char name[255];
 	use_syslog=u;
 	debug=d;
 	sprintf(name, "exact[%d]", (int)getpid());
 	if(use_syslog) 
 		openlog(name, 0, LOG_MAIL);
+	else {
+		if(logfile) {
+			lf=fopen(logfile,"a");
+			if(!lf) {
+				fprintf(stderr, "Unable to open log file %s\n", logfile);
+				exit(100);
+			}
+		} else
+			lf=stderr;
+	}
 	logger(LOG_DEBUG, "Running in debug mode\n");
 }
 
@@ -50,8 +61,9 @@ void logger(int level, char *fmt, ...) {
 	if(use_syslog)
 		vsyslog(level, fmt, ap);
 	else {
-		vfprintf(stderr,fmt, ap);
-		fflush(stderr);
+		if(!lf) lf=stderr; // for very early log messages
+		vfprintf(lf,fmt, ap);
+		fflush(lf);
 	}
 	va_end(ap);
 #endif

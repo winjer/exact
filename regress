@@ -1,0 +1,107 @@
+#!/bin/bash
+# $Id: regress,v 1.1 2003/02/19 20:27:15 doug Exp $
+# regression test sets for EXACT
+# note: this script isn't portable, and may blow up on you.
+#       it's really designed for my own regression tests.
+
+cleanroom () {
+    # remove and create the regression test directory
+    regdir=`pwd`/t
+    rm -rf "$regdir"
+    [ -d "$regdir" ] || {
+        mkdir "$regdir"
+        [ -d "$regdir" ] || exit 1
+        mkdir -p "$regdir/run/exact" "$regdir/state/exact" "$regdir/log/exact"
+    }
+    
+    export pkgdatadir=$regdir
+    export prefix=$regdir
+    export localstatedir=$regdir
+    export username=`id -un`
+    export groupname=`id -gn`
+    export watchfile=$regdir/watch
+    
+    # create the regression config file
+    sed -e "s,@datadir\@,$pkgdatadir,g"             \
+        -e "s,@prefix\@,$prefix,g"                  \
+        -e "s,@localstatedir\@,$localstatedir,g"    \
+        -e "s,@ac_cv_user\@,$username,g"            \
+        -e "s,@ac_cv_group\@,$groupname,g"          \
+        -e "s,@ac_cv_watch\@,$watchfile,g"          \
+        -e "s,@logging@,internal,g"                 \
+        -e 's,@timeout\@,180,g'                     \
+        -e 's,@flush\@,30,g'                        \
+        -e 's,@suspicious\@,12,g'                   \
+        < "exact.conf.in"                           \
+        > "$regdir/reg.conf"
+}
+
+report() {
+    if [ $? == 0 ]; then
+        echo Test $1 Succeeded
+    else
+        echo Test $1 Failed
+        exit
+    fi
+}
+
+killexact () {
+    kill `cat $regdir/run/exact/exact.pid` && sleep 1
+}
+
+### Test 1
+#
+# Very basic.
+
+test1 () {
+    echo Starting Test 1
+    cleanroom
+    touch $watchfile
+    ./exact -c $regdir/reg.conf
+    sleep 2
+    cat "td1-1" > $watchfile
+    sleep 10
+    killexact
+    diff t/log/exact/exact.log tr1
+    report 1
+}
+
+### Test 2
+#
+# 
+
+test2 () {
+    echo Starting Test 2
+    cleanroom
+    touch $watchfile
+    ./exact -c $regdir/reg.conf
+    sleep 2
+    cat "td2-1" > $watchfile
+    sleep 10
+    cat "td2-2" >> $watchfile
+    sleep 10
+    killexact
+    diff t/log/exact/exact.log tr2
+    report 2
+}
+
+test3 () {
+    echo Starting Test 3
+    cleanroom
+    touch $watchfile
+    ./exact -c $regdir/reg.conf
+    sleep 2
+    cat "td2-1" > $watchfile
+    sleep 10
+    rm $watchfile
+    sleep 30
+    cat "td2-2" >> $watchfile
+    sleep 10
+    killexact
+    diff t/log/exact/exact.log tr3
+    report 3
+}
+
+#test1
+#test2
+test3

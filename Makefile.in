@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.17 2003/02/14 10:26:40 doug Exp $
+# $Id: Makefile.in,v 1.18 2003/02/19 20:27:15 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -79,13 +79,21 @@ mostlyclean: clean
 
 maintainer-clean: clean
 
+# you may be wondering why some of these constants are in here
+# it is because a similar process is used to generate the
+# regression test configuration file, which for reasons of
+# brevity has much smaller values
 edit = sed \
         -e 's,@datadir\@,$(pkgdatadir),g' \
         -e 's,@prefix\@,$(prefix),g' \
 		-e 's,@localstatedir\@,$(localstatedir),g' \
 		-e 's,@ac_cv_user\@,$(username),g' \
 		-e 's,@ac_cv_group\@,$(groupname),g' \
-		-e 's,@ac_cv_watch\@,$(watchfile),g'
+		-e 's,@ac_cv_watch\@,$(watchfile),g' \
+		-e 's,@logging\@,syslog,g' \
+		-e 's,@timeout\@,1800,g' \
+		-e 's,@flush\@,300,g' \
+		-e 's,@suspicious\@,120,g'
 
 exact.conf: exact.conf.in Makefile
 	rm -f exact.conf exact.conf.tmp
@@ -105,3 +113,4 @@ exact.8: exact.8.in
 README.html: README
 	python2.2 html.py README > README.html
 
+test:; ./regressions

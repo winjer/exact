@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.13 2003/02/14 10:26:40 doug Exp $
+/* $Id: exact.c,v 1.14 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -73,6 +73,8 @@ void usage() {
 	fprintf(stderr,"       -h | --help         show this usage information\n");
 	fprintf(stderr,"       -d | --debug        more than you ever want to know\n");
 	fprintf(stderr,"       -f | --foreground   don't background\n");
+	fprintf(stderr,"       -c | --config       configuration filename\n");
+	fprintf(stderr,"                           (default %s\n", conffile_name());
 	fprintf(stderr,"see the manual page exact(8) for more information\n");
 }
 
@@ -89,9 +91,10 @@ void cmdline(int argc, char *argv[]) {
 			{"foreground",	0,	NULL, 'f'},
 			{"sleep", 0, NULL, 's'},
 			{"debug", 0, NULL, 'd'},
+			{"config", 1, NULL, 'c'},
 			{0,0,0,0}
 		};
-		c=getopt_long(argc,argv,"hsfd",long_options, &option_index);
+		c=getopt_long(argc,argv,"hsfdc:",long_options, &option_index);
 		if(c==-1)
 			break;
 		switch(c) {
@@ -106,6 +109,9 @@ void cmdline(int argc, char *argv[]) {
 				break;
 			case 'd':
 				cmd.debug=1;
+				break;
+			case 'c':
+				conffile_setname(optarg);
 				break;
 			default:
 				fprintf(stderr, "Unknown argument: %c\n",c);
@@ -154,20 +160,33 @@ void exit_handler(int s) {
 }
 
 int main(int argc, char *argv[]) {
+	int use_syslog=0;
 	cmdline(argc,argv);
-	logger_init(0,cmd.debug);
+	logger_init(0,cmd.debug,NULL);
 	conffile_read();
 	conffile_check();
 	checkpid();
 	auth_init();
 	match_init();
 	daemonize(cmd.foreground, cmd.sleep);
-	if(!cmd.foreground) {
-		logger_init(1,0); // use syslog, never debug with syslog!
-	} else {
-		logger_init(0,cmd.debug); // use stderr
+	if(!strcmp("syslog",conffile_param("logging")))
+		use_syslog=1;
+	else {
+		if(!strcmp("internal",conffile_param("logging")))
+			use_syslog=0;
+		else {
+			logger(LOG_ERR, "logging parameter is neither syslog nor internal\n");
+			exit(100);
+		}
 	}
-	logger(LOG_DEBUG, "daemonized");
+	if(cmd.foreground) {
+		logger_init(0,cmd.debug,NULL); // use stderr
+	} else {
+		// never debug using syslog, because you might
+		// get a loop
+		logger_init(use_syslog,!use_syslog && cmd.debug,conffile_param("logfile")); 
+		logger(LOG_DEBUG, "Daemonized\n");
+	}
 	writepid();
 	auth_write(); // so that the file exists
 	signal(1,conffile_reload);

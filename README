@@ -5,7 +5,7 @@ README for EXACT
 :Version: 1.10
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/02/14 10:26:40 $
+:Date: $Date: 2003/02/19 20:27:15 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -80,7 +80,7 @@ Where do I download EXACT?
 
 The current version of EXACT is 1.01 and is available for download_.
 
-.. _download: http://www.britishsteal.com/dist/exact/exact-1.01.tar.gz
+.. _download: http://www.britishsteal.com/dist/exact/exact-1.10.tar.gz
 
 What other software does this?
 ==============================
@@ -90,7 +90,7 @@ like this approach and haven't tried it, however YMMV.
 
 popbsmtp_ uses the same technique as EXACT, and is written in Perl.
 
-There are also some perl scripts_ available from some other guy called Doug_
+There are also some perl scripts_ from some other guy called Doug_
 available, that work with exim pretty easily (although they do require tweaking)
 - I've not tried them with any other MTA.
 

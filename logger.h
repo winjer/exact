@@ -1,4 +1,4 @@
-/* $Id: logger.h,v 1.3 2003/01/24 15:32:24 doug Exp $
+/* $Id: logger.h,v 1.4 2003/02/19 20:27:15 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -21,5 +21,5 @@
 #include <stdarg.h>
 #include <syslog.h>
 
-void logger_init(int use_syslog, int debug);
+void logger_init(int use_syslog, int debug, char *logfile);
 void logger(int level, char *fmt, ...);
