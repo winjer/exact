@@ -1,4 +1,4 @@
-/* $Id: debugmsg.c,v 1.2 2003/01/22 18:18:49 doug Exp $
+/* $Id: debugmsg.c,v 1.3 2003/01/23 12:34:43 doug Exp $
 */
 
 #include <stdarg.h>
@@ -14,6 +14,7 @@ void debugmsg(int level, char *fmt, ...) {
 		va_list ap;
 		va_start(ap,fmt);
 		vfprintf(stderr, fmt, ap);
+		fflush(stderr);
 		va_end(ap);
 	}
 #endif

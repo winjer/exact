@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.2 2003/01/22 18:18:49 doug Exp $
+/* $Id: conffile.c,v 1.3 2003/01/23 12:34:43 doug Exp $
 */
 
 #include <stdio.h>
@@ -6,6 +6,9 @@
 #include <regex.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "conffile.h"
+#include "debugmsg.h"
 
 typedef struct {
 	char *name;
@@ -22,6 +25,29 @@ void zap_comments(char *s) {
 			return;
 		}
 		s++;
+	}
+}
+
+void conffile_check() {
+	char *required_s[]={"pidfile","maillog","match","authfile","logfile",
+		"logfile"};
+	char *required_i[]={"loglevel","timeout","flush"};
+	int i;
+	for(i=0;i<6;++i) {
+		if(!conffile_param(required_s[i])) {
+			debugmsg(DMSG_STANDARD,"Fatal Error: missing parameter %s\n", required_s[i]);
+			exit(4);
+		}
+	}
+	for(i=0;i<3;++i) {
+		if(!conffile_param(required_i[i])) {
+			debugmsg(DMSG_STANDARD,"Fatal Error: missing parameter %s\n", required_i[i]);
+			exit(4);
+		}
+		if(conffile_param_int(required_i[i])==0) {
+			debugmsg(DMSG_STANDARD,"Fatal Error: parameter %s should be an int, but i can't parse %s\n", required_i[i],conffile_param(required_i[i]));
+			exit(4);
+		}
 	}
 }
 

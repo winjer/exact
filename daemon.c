@@ -1,4 +1,4 @@
-// $Id: daemon.c,v 1.3 2003/01/22 19:49:46 doug Exp $
+// $Id: daemon.c,v 1.4 2003/01/23 12:34:43 doug Exp $
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,15 +12,19 @@
 #include "debugmsg.h"
 #include "conffile.h"
 
-void dofork() {
-	pid_t p;
-	p=fork();
+void dofork(int s) {
+	pid_t p=fork();
 	switch(p) {
 		case -1: // error
 			debugmsg(DMSG_STANDARD, "Fatal Error when forking\n");
 			exit(2);
 			break;
 		case 0: // we are the child
+			if(s) {
+				fprintf(stderr, "Child sleeping - attach gdb to %d\n", 
+						getpid());
+				sleep(10);
+			}
 			break;
 		default: // we are the parent
 			exit(0);
@@ -30,8 +34,7 @@ void dofork() {
 }
 
 void sesslead() {
-	pid_t p;
-	p=setsid();
+	pid_t p=setsid();
 	if(p==-1) {
 		debugmsg(DMSG_STANDARD, "Fatal Error while running setsid\n");
 		exit(2);
@@ -47,17 +50,6 @@ void rootdir() {
 	}
 }
 
-void setumask() {
-	int umaski;
-	errno=0;
-	umaski=atoi(0);
-	if(errno) {
-		debugmsg(DMSG_STANDARD, "Cannot set umask");
-		exit(2);
-	}
-	umask(umaski); // discard return value, no error possible
-}
-
 void reopenfds() {
 	freopen("/dev/null", "r", stdin);
 	fclose(stdout);
@@ -67,13 +59,13 @@ void reopenfds() {
 	}
 }
 
-void daemonize() {
+void daemonize(int s) {
 #ifdef HAVE_WORKING_FORK
-	dofork(); // so the parent can exit, returning control
+	dofork(0); // so the parent can exit, returning control
 	sesslead(); // become a process group and session group leader
-	dofork(); // session group leader exits.  we can never regain terminal.
+	dofork(s); // session group leader exits.  we can never regain terminal.
 	rootdir(); // to ensure no directory is kept in use
-	setumask(); // so no weird perms are inherited
+	umask(0); // so no weird perms are inherited
 	reopenfds(); // so stdin, stdout and stderr are sensible
 #else
 	// other stuff
