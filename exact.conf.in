@@ -41,7 +41,7 @@ maillog			@ac_cv_watch@
 # UW-IMAPD
 # ========
 # order           username,address
-# match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]$
+# match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
 #
 # Courier
 # =======

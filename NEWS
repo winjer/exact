@@ -1,4 +1,10 @@
-$Id: NEWS,v 1.5 2003/06/10 10:45:37 doug Exp $ 
+$Id: NEWS,v 1.6 2003/07/06 17:19:27 doug Exp $ 
+
+EXACT 1.35
+
+Modified uw-imapd match expression so it supports ipop3d also.
+
+--------------------------------------------------------------------------------
 
 EXACT 1.34
 
