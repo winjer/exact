@@ -1,4 +1,4 @@
-/* $Id: match.c,v 1.8 2003/05/20 16:38:38 doug Exp $
+/* $Id: match.c,v 1.9 2003/09/23 19:20:28 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "match.h"
 #include "logger.h"

@@ -33,40 +33,14 @@ pidfile			@localstatedir@/run/exact/exact.pid
 maillog			@ac_cv_watch@
 
 #
-# order and match: specify how lines are to be matched in the maillog
+# serverdefs: the file containing definitions for known server types.
 #
-# These will vary depending upon your POP/IMAP server.  Uncomment the 
-# appropriate pair for your server.
+serverdefs      @sysconfdir@/exact-servers.conf
+
 #
-# UW-IMAPD
-# ========
-# order           username,address
-# match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
+# server: the server to use, from the serverdefs file
 #
-# Courier
-# =======
-# order           username,address
-# match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
-#
-# Cyrus
-# =====
-# order           address,username
-# match           (login):.*\[([0-9\.]*)\] ([^ ]*)
-#
-# Perdition
-# =========
-# order           address,username
-# match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
-#
-# Qpopper
-# =======
-# order           username,address
-# match           (login) by user \"(.*)\" at \([^ ]*\) (.*) \[[^ ]*\]
-#
-# TeaPOP
-# ======
-# order           username,address
-# match           (Successful login for) (.*).*\[([0-9\.]*)\]$
+server          uw-imap
 
 #
 # authfile: the file the ip addresses to allow relay for are written to

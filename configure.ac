@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.13 2003/05/25 18:38:47 doug Exp $
+# $Id: configure.ac,v 1.14 2003/09/23 19:20:28 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -66,6 +66,7 @@ AC_CHECK_FUNCS([regcomp])
 AC_CHECK_FUNCS([alarm])
 AC_CHECK_FUNCS([memset])
 AC_CHECK_FUNCS([select])
+AC_CHECK_FUNCS([strdup])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_FUNC_SELECT_ARGTYPES

@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.16 2003/05/20 16:41:08 doug Exp $
+/* $Id: exact.c,v 1.17 2003/09/23 19:20:28 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #ifdef HAVE_GETOPT_H
     #include <getopt.h>

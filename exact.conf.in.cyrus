@@ -32,26 +32,9 @@ pidfile			@localstatedir@/run/exact/exact.pid
 #
 maillog			@ac_cv_watch@
 
-#
-# order: the order of parameters in the following match expression.
-#
-# valid values are "username,address" or "address,username"
-#
-# uw-imapd:
-# order           username,address
-# 
-# cyrus:
-order           address,username
+serverdefs      @sysconfdir@/exact-servers.conf
 
-#
-# match: the regular expression used to identify the user and ip address to
-# authenticate.
-#
-# uw-imapd:
-# match			(Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
-#
-# cyrus:
-match           (login): \[([0-9\.]*)\] ([^ ]*)
+server          cyrus
 
 #
 # authfile: the file the ip addresses to allow relay for are written to

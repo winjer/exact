@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.10 2003/05/20 16:38:38 doug Exp $
+/* $Id: conffile.c,v 1.11 2003/09/23 19:20:28 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -34,6 +34,7 @@
 #include <string.h>
 
 #include "conffile.h"
+#include "apconf.h"
 #include "logger.h"
 
 typedef struct {
@@ -74,8 +75,42 @@ void conffile_reload(int s) {
 	signal(1,conffile_reload);
 }
 
+void server_check() {
+    apconf *a;
+    section *s;
+    char *fn;
+    char *serverdefs;
+
+    fn=conffile_param("serverdefs");
+    serverdefs=strdup(fn);
+    logger(LOG_DEBUG, "Reading serverdefs from '%s'\n", serverdefs);
+    a = apconf_read(serverdefs);
+    if(!a) {
+        logger(LOG_ERR, "Fatal Error: cannot read serverdefs file %s\n", 
+                conffile_param("serverdefs"));
+        exit(4);
+    }
+    s=apconf_getsec(a, conffile_param("server"));
+    if(!s) {
+        logger(LOG_ERR, "Server section %s not found in serverdefs file\n",
+                conffile_param("server"));
+        exit(4);
+    }
+    param[param_max].name="order";
+    param[param_max].value=strdup(s->order);
+    param_max++;
+    param[param_max].name="match";
+    param[param_max].value=strdup(s->match);
+    param_max++;
+    if(strcmp(conffile_param("order"), "username,address") && 
+        strcmp(conffile_param("order"), "address,username")) {
+            logger(LOG_ERR, "Fatal Error: order %s incorrect\n", conffile_param("order"));
+            exit(4);
+    }
+}
+
 void conffile_check() {
-	char *required_s[]={"pidfile", "maillog", "order", "match", 
+	char *required_s[]={"pidfile", "maillog", "serverdefs", "server", 
                             "authfile","dumpfile","authtemp","logging","logfile"};
 	char *required_i[]={"timeout","flush","suspicious"};
 	int i;
@@ -96,11 +131,7 @@ void conffile_check() {
 			exit(4);
 		}
 	}
-    if(strcmp(conffile_param("order"), "username,address") && 
-        strcmp(conffile_param("order"), "address,username")) {
-            logger(LOG_ERR, "Fatal Error: order %s incorrect\n", conffile_param("order"));
-            exit(4);
-    }
+    server_check();
 	logger(LOG_DEBUG, "checking configuration file finished\n");
 }
 
