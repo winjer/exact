@@ -1,3 +1,5 @@
+$Id: NEWS,v 1.4 2003/05/25 18:39:37 doug Exp $ 
+
 EXACT 1.33
 
 changed mode of installed files, as per suggestion from Mike Whitaker.
@@ -13,9 +15,11 @@ Solaris bug, patch from William Armitage:
     copy the primed Alarm timer from the parent process. hence auth_clean is
     never called.
 
-Jon R. Luini spotted a bug in how the configure script worked on freebsd, and
-suggested a fix.  I haven't got a FreeBSD machine to try it on, so reports of
-success or failure would be appreciated.
+Jon R. Luini spotted a bug in how the configure script worked on freebsd, this
+has been fixed.
+
+Upgraded the build system autoconf to 2.57, to avoid spurious errors on
+freebsd.
 
 --------------------------------------------------------------------------------
 
