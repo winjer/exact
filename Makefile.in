@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.20 2003/05/20 16:44:40 doug Exp $
+# $Id: Makefile.in,v 1.21 2003/05/20 16:55:18 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -58,10 +58,10 @@ install: all
 		$(DESTDIR)/$(localstatedir)/state/exact $(DESTDIR)/$(mandir)/man8 $(DESTDIR)/$(mandir)/man5
 	chown $(username) $(DESTDIR)/$(localstatedir)/run/exact $(DESTDIR)/$(localstatedir)/state/exact
 	chgrp $(groupname) $(DESTDIR)/$(localstatedir)/run/exact $(DESTDIR)/$(localstatedir)/state/exact
-	$(INSTALL) exact $(DESTDIR)/$(sbindir)/exact
-	$(INSTALL) exact.conf $(DESTDIR)/$(sysconfdir)/exact.conf
-	$(INSTALL) exact.8 $(DESTDIR)/$(mandir)/man8
-	$(INSTALL) exact.conf.5 $(DESTDIR)/$(mandir)/man5
+	$(INSTALL) -m755 exact $(DESTDIR)/$(sbindir)/exact
+	$(INSTALL) -m644 exact.conf $(DESTDIR)/$(sysconfdir)/exact.conf
+	$(INSTALL) -m644 exact.8 $(DESTDIR)/$(mandir)/man8
+	$(INSTALL) -m644 exact.conf.5 $(DESTDIR)/$(mandir)/man5
 
 uninstall:
 	/bin/rm -f $(DESTDIR)/$(bindir)/exact
