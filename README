@@ -2,8 +2,11 @@
 README for EXACT
 ================
 
-Version 1.0
-Copyright 2003 Doug Winter <doug@pigeonhold.com>
+:Version: 1.0
+:Author: Doug Winter
+:Contact: doug@pigeonhold.com
+:Date: $Date: 2003/01/26 15:17:18 $
+:Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
 
@@ -72,7 +75,7 @@ What other software does this?
 
 I couldn't find anything that suited my needs perfectly, which is why I wrote
 this.  DRAC_ performs the same task, using patched IMAP and POP servers.  I
-didn't like this approach and haven't tried them, however YMMV.
+didn't like this approach and haven't tried it, however YMMV.
 
 There are also some perl scripts_ available from some other guy called Doug_
 available, that work with exim pretty easily (although they do require tweaking)
@@ -80,7 +83,7 @@ available, that work with exim pretty easily (although they do require tweaking)
 
 For qmail, smtp-poplock_ works well.
 
-.. DRAC_: http://mail.cc.umanitoba.ca/drac/
+.. _DRAC: http://mail.cc.umanitoba.ca/drac/
 .. _scripts: http://cc.ysu.edu/~doug/exim-pop.tar.Z
 .. _Doug: http://cc.ysu.edu/~doug/
 .. _smtp-poplock: http://www.davideous.com/smtp-poplock/
@@ -115,8 +118,9 @@ how.
 What's all the funny syntax in this file?
 =========================================
 
-This file is written in reStructuredText.  This can be converted to HTML (and
-other things) using docutils_.
+If you are reading the text version of this file, you might have noticed some
+odd syntax.  This file is written in reStructuredText.  This can be converted to
+HTML (and other things) using docutils_.
 
 .. _docutils: http://docutils.sourceforge.net/
 

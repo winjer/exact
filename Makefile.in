@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.13 2003/01/26 11:47:36 doug Exp $
+# $Id: Makefile.in,v 1.14 2003/01/26 15:17:18 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -50,7 +50,7 @@ DOCS = exact.8
 MISC = configure mkinstalldirs install-sh aclocal.m4
 OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o
 
-all: exact exact.conf exact.8
+all: exact exact.conf exact.8 README.html
 
 install: all
 	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact $(localstatedir)/state/exact $(mandir)/man8
@@ -97,5 +97,5 @@ exact.8: exact.8.in
 	mv exact.8.tmp exact.8
 
 README.html: README
-	python2.2 html.py clickwrap.txt > clickwrap.html
+	python2.2 html.py README > README.html
 
