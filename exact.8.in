@@ -15,6 +15,9 @@ user successfully authenticates, then their IP address is added to a list of
 addresses from which relaying should be allowed.
 
 This list is periodically cleaned of old entries.
+
+See http://adju.st/dist for more information.
+
 .SH OPTIONS
 .TP
 .B \-f

@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.18 2004/03/27 13:05:10 doug Exp $
+/* $Id: exact.c,v 1.19 2004/03/31 20:25:21 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -49,6 +49,7 @@ typedef struct {
     int sleep;
     int debug;
     int preserve;
+    int tables;
 } command_line;
 
 command_line cmd;
@@ -77,8 +78,13 @@ void usage() {
     fprintf(stderr,"       -f | --foreground   don't background\n");
     fprintf(stderr,"       -p | --preserve     don't remove the relay file on exit\n");
     fprintf(stderr,"       -c | --config       configuration filename\n");
+    fprintf(stderr,"       -V | --version      print the version of exact and exit\n");
     fprintf(stderr,"                           (default %s)\n", conffile_name());
     fprintf(stderr,"see the manual page exact(8) for more information\n");
+}
+
+void version() {
+    fprintf(stderr, "Exact Version 1.40 (c) 2004, Doug Winter\n");
 }
 
 void cmdline(int argc, char *argv[]) {
@@ -97,14 +103,18 @@ void cmdline(int argc, char *argv[]) {
             {"debug", 0, NULL, 'd'},
             {"preserver", 0, NULL, 'p'},
             {"config", 1, NULL, 'c'},
+            {"version", 0, NULL, 'V'},
             {0,0,0,0}
         };
-        c=getopt_long(argc,argv,"phsfdc:",long_options, &option_index);
+        c=getopt_long(argc,argv,"phsfdc:V",long_options, &option_index);
         if(c==-1)
             break;
         switch(c) {
             case 'h':
                 usage();
+                exit(0);
+            case 'V':
+                version();
                 exit(0);
             case 'f':
                 cmd.foreground=1;
@@ -162,6 +172,7 @@ void writepid() {
 
 void exit_handler(int s) {
     unlink(conffile_param("pidfile"));
+    auth_exit();
     if(!cmd.preserve)
         unlink(conffile_param("authfile"));
     logger(LOG_ERR, "terminated\n");
@@ -197,12 +208,6 @@ int main(int argc, char *argv[]) {
         logger(LOG_DEBUG, "Daemonized\n");
     }
     writepid();
-#ifdef WITH_DB
-    if(!strcmp(conffile_param("authtype"), "text"))
-        auth_write_text(); // so that the file exists
-#else
-    auth_write_text(); // so that the file exists
-#endif
     signal(1,conffile_reload);
     signal(10,auth_dump);
     signal(15,exit_handler);

@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.40pre3
+:Version: 1.40
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2004/03/27 13:05:10 $
+:Date: $Date: 2004/03/31 20:25:21 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -29,18 +29,13 @@ and these MTAs:
 
   * Exim_
   * Sendmail_
+  * Postfix_
 
-I believe EXACT should work as-is with a number of other POP, IMAP and SMTP
-implementations - and I'm happy to adapt the software to work with these if
-necessary.  Please let me know if you get EXACT working with other
-implementations, or if you think changes to EXACT are required.
+It doesn't support qmail_ as-is, because qmail is rather unique.  See below for
+some other software that might help though.
 
-If you get this working, please send_ me your working configurations so I can
-include them here.
-
-It doesn't support qmail_ as-is, because qmail is rather unique.  If you get
-this working please send_ me your software, so I can include it, or include a
-reference to it.  See below for some other software that might help though.
+All patches to improve compatibility, and regex stanzas for other POP/IMAP
+servers gratefully received.
 
 .. _UW-IMAPD: http://www.washington.edu/imap/
 .. _Cyrus: http://asg.web.cmu.edu/cyrus/imapd/
@@ -51,6 +46,7 @@ reference to it.  See below for some other software that might help though.
 .. _cucipop: http://freshmeat.net/projects/cucipop/?topic_id=34
 .. _Exim: http://www.exim.org
 .. _Sendmail: http://www.sendmail.org
+.. _Postfix: http://www.postfix.org
 .. _qmail: http://cr.yp.to/qmail.html
 .. _send: mailto:doug@pigeonhold.com
 
@@ -92,9 +88,29 @@ When started, the program watches a log file for lines written by a POP or IMAP
 server that indicate a successful login.  Generally this is a file written by
 syslog, by default /var/log/mail.log.  On your system it may be different.
 
-When one of these lines is seen, it is added to an internal database of
-ip addresses and is also written out to a text file.  Periodically, old entries
-are cleaned from this file.
+You have two options for the output format of EXACT:
+
+Berkeley Database Format
+------------------------
+
+The venerable 'db' or 'dbm' format.  If the Berkeley Database libraries (libdb)
+are available on your system, then run configure with --with-db.  Exact will
+then output dbm files instead of a text format relay file.  This is compatible
+with Exim and Postfix.
+
+If you haven't got these libraries they are probably packaged by your distro.
+To compile from source, download them from Sleepycat_.
+
+To write in text format even though you configured with --with-db, see the
+authtype parameter in exact.conf.
+
+.. _Sleepycat: http://www.sleepycat.com/
+
+Text Format
+-----------
+
+Alternatively you can write the database out in text format, with one ip address
+per line.
 
 Your MTA can then be configured to read this file, to determine hosts that are
 allowed to relay.
@@ -102,20 +118,14 @@ allowed to relay.
 Where can I get EXACT?
 ======================
 
-The current production version of EXACT is 1.38 and is available for download:
+The current production version of EXACT is 1.40.  This is available here:
 
-    http://www.britishsteal.com/dist/exact/exact-1.38.tar.gz
+    http://adju.st/dist/exact/exact-1.40.tar.gz
 
-The next version of EXACT will be 1.40.  A prerelease of this is available here:
+There is also a `mailing list`_ for announcements.  I suggest you join this for
+bug fix and security information.
 
-    http://www.britishsteal.com/dist/exact/exact-1.40pre3.tar.gz
-
-This will be the next version.  I'd appreciate anyone willing to install this
-version and confirm it's success, or reporting bugs.
-
-There is also a `mailing list`_ for announcements.
-
-.. _`mailing list`: http://www.britishsteal.com/mailman/listinfo/exact-announce
+.. _`mailing list`: http://adju.st/mailman/listinfo/exact-announce
 
 What other software does this?
 ==============================
@@ -167,12 +177,18 @@ How do I make it work with my MTA?
 Exim 
 ----
 
-This is very simple to implement in Exim.  Add a line like:
+This is very simple to implement in Exim.  
+
+For text-format output, add a line like:
 
 ``host_accept_relay = 127.0.0.1:net-lsearch;/var/state/exact/relay``
 
+For db-format output, add a line like:
+
+``host_accept_relay = 127.0.0.1:net-dbm;/var/state/exact/relay``
+
 where ``/var/state/exact/relay`` is the location of the relay file written by 
-exact.  net-lsearch specifies that it will search that file for IP addresses.
+exact.
 
 You should be aware that when using exim, exact should be started first - if 
 exim cannot find the state file when it starts then it will exit.
@@ -189,7 +205,7 @@ directly if you leave out the 'LOCAL_CONFIG' and 'LOCAL_RULESETS' lines::
 
     LOCAL_CONFIG
     #POP Auth
-    F{POPAuth} /usr/local/var/state/exact/relay
+    F{POPAuth} /var/state/exact/relay
     
     SLocal_check_rcpt
     R<$+ @ $=w >            $@ OK # if it is to domain delivered by us
@@ -199,6 +215,18 @@ directly if you leave out the 'LOCAL_CONFIG' and 'LOCAL_RULESETS' lines::
     R$*                     $#error $@ 5.5.0 $: "550 Relaying denied: authenticate with POP first"
 
 Thanks Johan :)
+
+Postfix
+-------
+
+In main.cf have a line like:
+
+mynetworks = 127.0.0.0/8, hash:/var/state/exact/relay
+
+You must use db format output for postfix to work.  Postfix has some
+requirements for the ownership of the relay file.  I have been told that you
+should configure exact to write the relay file with group adm for it to work.
+You can configure the group in exact.conf.
 
 What's all the funny syntax in this file?
 =========================================

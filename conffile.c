@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.11 2003/09/23 19:20:28 doug Exp $
+/* $Id: conffile.c,v 1.12 2004/03/31 20:25:21 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -106,6 +106,11 @@ void server_check() {
         strcmp(conffile_param("order"), "address,username")) {
             logger(LOG_ERR, "Fatal Error: order %s incorrect\n", conffile_param("order"));
             exit(4);
+    }
+    if(strcmp(conffile_param("authtype"), "db") &&
+            strcmp(conffile_param("authtype"), "text")) {
+        logger(LOG_ERR, "Fatal Error: authtype %s incorrect\n", conffile_param("authtype"));
+        exit(4);
     }
 }
 

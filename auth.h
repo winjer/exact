@@ -1,4 +1,4 @@
-/* $Id: auth.h,v 1.5 2003/01/24 15:32:24 doug Exp $
+/* $Id: auth.h,v 1.6 2004/03/31 20:25:21 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -22,3 +22,5 @@ void auth_dump(int);
 void auth_init();
 void auth_add(char *username, char *ip);
 void auth_write();
+void auth_exit();
+void auth_table_dump(FILE *out);

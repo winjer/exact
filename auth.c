@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.12 2004/03/27 18:01:15 doug Exp $
+/* $Id: auth.c,v 1.13 2004/03/31 20:25:21 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -75,7 +75,10 @@ auth_entry *shadow_auth;
 DB *db;
 #endif
 
-int auth_max=1024;
+// auth_max used to be 1024, but that's really quite low.  we allocate
+// MATCH_LOGIN_HOSTNAME_MAX + 4 bytes per auth structure, which is about 64K
+// for 16,384 structures.
+int auth_max=16384;
 int auth_cur=0;
 int auth_alarm=0;
 
@@ -83,7 +86,7 @@ int auth_alarm=0;
  *
  * this is triggered by the receipt of a SIGUSR1
  */
-void auth_dump(int sig) {
+void auth_text_dump() {
     int i;
     FILE *f=fopen(conffile_param("dumpfile"),"w");
     if(!f) {
@@ -94,10 +97,52 @@ void auth_dump(int sig) {
     logger(LOG_NOTICE, "dumping state\n");
     for(i=0;i<auth_cur;i++) {
         char tbuff[1024];
-        strftime(tbuff, 1023, "%x %X", localtime(&auth[i].t));
+        strftime(tbuff, 1023, "%Y-%m-%d %H:%M:%S", localtime(&auth[i].t));
         fprintf(f,"%s\t\t%d (%s)\n", auth[i].hostname,(int)auth[i].t, tbuff);
     }
     fclose(f);
+}
+
+#ifdef WITH_DB
+void auth_db_dump() {
+    DBC *dbc;
+    DBT key, data;
+    int ret;
+    FILE *f=fopen(conffile_param("dumpfile"),"w");
+
+    if(!f) {
+        logger(LOG_ERR, "Unable to write to dump file %s\n", conffile_param("dumpfile"));
+        return;
+    }
+    chmod(conffile_param("dumpfile"),0640);
+    logger(LOG_NOTICE, "dumping state\n");
+
+    if((ret = db->cursor(db, NULL, &dbc, 0)) != 0) {
+        db->err(db, ret, "opening cursor");
+        exit(22);
+    }
+    memset(&key, 0, sizeof(key));
+    memset(&data, 0, sizeof(data));
+    while((ret = dbc->c_get(dbc, &key, &data, DB_NEXT)) ==0) {
+        char tbuff[1024];
+        char *hostname=key.data;
+        time_t *time=data.data;
+        strftime(tbuff, 1023, "%Y-%m-%d %H:%M:%S", localtime(time));
+        fprintf(f, "%s\t%s\n", hostname, tbuff);
+    }
+    fclose(f);
+}
+#endif
+
+void auth_dump(int sig) {
+#ifdef WITH_DB
+    if(!strcmp(conffile_param("authtype"), "db"))
+        auth_db_dump();
+    else
+        auth_text_dump();
+#else
+    auth_text_dump();
+#endif
 }
 
 /* auth_cmp: qsort/bsearch comparison function
@@ -186,12 +231,6 @@ void db_errcall_fn(const char *errpfx, char *msg) {
     logger(LOG_ERR, "Berkeley Database: %s\n", msg);
 }
 
-// This signal handler closes the database when we are killed
-void closedb(int sig) {
-    db->close(db, 0);
-    exit(0);
-}
-
 void opendb() {
     int ret;
     int db_flags = DB_CREATE | DB_INIT_CDB;
@@ -218,17 +257,14 @@ void opendb() {
 #else
 #error "Unsupported Berkeley DB version"
 #endif
-    // if we are terminated, close our db cleanly
-    signal(15, closedb);
 }
-
 
 DBT hostname_key(char *hn) {
     DBT key;
 
     memset(&key, 0, sizeof(key));
     key.data = hn;
-    key.size = strlen(hn);
+    key.size = strlen(hn)+1;
     return key;
 }
 
@@ -282,6 +318,7 @@ void auth_add(char *username, char *hostname) {
 #endif
 }
 
+#ifdef WITH_DB
 void auth_db_clean(int sig) {
     DBC *dbc;
     DBT key, data;
@@ -309,7 +346,7 @@ void auth_db_clean(int sig) {
     }
     logger(LOG_DEBUG,"Finished cleaning cycle\n");
 }
-
+#endif
 
 /* auth_clean_text: remove entries that have expired.  this is done by selectively
  * copying entries to the shadow buffer, then swapping buffers.
@@ -361,10 +398,23 @@ void auth_clean(int sig) {
 void auth_init() {
     logger(LOG_DEBUG, "initialising authentication tables\n");
     auth_init_mem();
-    opendb();
     auth_alarm=conffile_param_int("flush");
     signal(14, auth_clean);
     alarm(auth_alarm);
+    // create the empty output files, so our SMTP server doesn't blow up
+#ifdef WITH_DB
+    if(!strcmp(conffile_param("authtype"), "db"))
+        opendb();
+    else
+        auth_write_text(); // so that the file exists
+#else
+    auth_write_text(); // so that the file exists
+#endif
     logger(LOG_DEBUG, "authentication tables initialised\n");
 }
 
+void auth_exit() {
+#ifdef WITH_DB
+    db->close(db, 0);
+#endif
+}

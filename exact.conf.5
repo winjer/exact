@@ -33,6 +33,12 @@ the regular expression used to identify the user and ip address to
 authenticate.
 The first bracketed expression should be the username and the second the hostname. 
 .TP
+.B authtype
+the type of relay state table used.  If exact was compiled with the --with-db
+switch to configure, then you can use Berkeley DB format state tables.
+Otherwise you must use text format tables.  The only valid values for this
+parameter are 'db' and 'text'.
+.TP
 .B authfile
 the file the ip addresses to allow relay for are written to.  Defaults to
 /usr/local/var/state/exact/relay.
