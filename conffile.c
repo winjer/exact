@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.3 2003/01/23 12:34:43 doug Exp $
+/* $Id: conffile.c,v 1.4 2003/01/24 13:59:45 doug Exp $
 */
 
 #include <stdio.h>
@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "conffile.h"
-#include "debugmsg.h"
+#include "logger.h"
 
 typedef struct {
 	char *name;
@@ -29,23 +29,22 @@ void zap_comments(char *s) {
 }
 
 void conffile_check() {
-	char *required_s[]={"pidfile","maillog","match","authfile","logfile",
-		"logfile"};
-	char *required_i[]={"loglevel","timeout","flush"};
+	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile"};
+	char *required_i[]={"timeout","flush"};
 	int i;
-	for(i=0;i<6;++i) {
+	for(i=0;i<5;++i) {
 		if(!conffile_param(required_s[i])) {
-			debugmsg(DMSG_STANDARD,"Fatal Error: missing parameter %s\n", required_s[i]);
+			logger(LOG_ERR,"Fatal Error: missing parameter %s\n", required_s[i]);
 			exit(4);
 		}
 	}
-	for(i=0;i<3;++i) {
+	for(i=0;i<2;++i) {
 		if(!conffile_param(required_i[i])) {
-			debugmsg(DMSG_STANDARD,"Fatal Error: missing parameter %s\n", required_i[i]);
+			logger(LOG_ERR,"Fatal Error: missing parameter %s\n", required_i[i]);
 			exit(4);
 		}
 		if(conffile_param_int(required_i[i])==0) {
-			debugmsg(DMSG_STANDARD,"Fatal Error: parameter %s should be an int, but i can't parse %s\n", required_i[i],conffile_param(required_i[i]));
+			logger(LOG_ERR,"Fatal Error: parameter %s should be an int, but i can't parse %s\n", required_i[i],conffile_param(required_i[i]));
 			exit(4);
 		}
 	}
@@ -58,12 +57,15 @@ int conffile_read(char *filename) {
 	regmatch_t pm[16];
 
 	regcomp(&rx,"\\([^\t ]*\\)[ \t]*\\(.*\\)",0);
+	logger(LOG_DEBUG, "Opening configuration file %s\n", filename);
 	f=fopen(filename,"r");
 	if(!f) return 0;
 	while(fgets(s,1023,f)!=NULL) {
 		s[strlen(s)-1]='\0';
+		logger(LOG_DEBUG, "Read from conf file: %s\n", s);
 		zap_comments(s);
-		if(regexec(&rx,s,16,pm,0)==0 && 
+		
+		if(strlen(s)>0 && regexec(&rx,s,16,pm,0)==0 && 
 				pm[1].rm_so!=-1 && pm[1].rm_eo!=-1 && pm[2].rm_so!=-1 && pm[2].rm_eo!=-1) {
 			param[param_max].name=(char *)malloc(pm[1].rm_eo-pm[1].rm_so+1);
 			param[param_max].value=(char *)malloc(pm[2].rm_eo-pm[2].rm_so+1);
@@ -71,12 +73,12 @@ int conffile_read(char *filename) {
 			strncpy(param[param_max].value, s+pm[2].rm_so, pm[2].rm_eo-pm[2].rm_so);
 			param[param_max].name[pm[1].rm_eo-pm[1].rm_so]=0;
 			param[param_max].value[pm[2].rm_eo-pm[2].rm_so]=0;
-			//fprintf(stderr, "Config name: [%s] value: [%s]\n", 
-					//param[param_max].name, param[param_max].value);
+			logger(LOG_DEBUG, "Config name: [%s] value: [%s]\n", 
+					param[param_max].name, param[param_max].value);
 			param_max++;
 		}
 	}
-	fclose(f);
+	//fclose(f);
 	return 1;
 }
 

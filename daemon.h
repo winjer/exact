@@ -1,3 +1,3 @@
-// $Id: daemon.h,v 1.1 2003/01/22 19:49:46 doug Exp $
+// $Id: daemon.h,v 1.2 2003/01/24 13:59:45 doug Exp $
 
-void daemonize();
+void daemonize(int foreground, int sleep);

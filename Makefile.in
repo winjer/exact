@@ -15,36 +15,44 @@ AR_FLAGS = rc
 RANLIB = @RANLIB@
 
 CC= @CC@
-CFLAGS = -Wall -I. @CFLAGS@
+CFLAGS = -Wall -I. -DCONFDIR=\"@sysconfdir@\" @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 INSTALL = @INSTALL@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 localstatedir = @localstatedir@
-bindir = $(exec_prefix)/bin
-libdir = $(prefix)/lib
-infodir = $(prefix)/info
+bindir = @bindir@
+mandir = @mandir@
+sbindir = @sbindir@
+sysconfdir = @sysconfdir@
+username = @ac_cv_user@
+groupname = @ac_cv_group@
+watchfile = @ac_cv_watch@
 
-SOURCES = tail.c daemon.c exact.c debugmsg.c match.c auth.c conffile.c
-DOCS = exact.man
+SOURCES = tail.c daemon.c exact.c logger.c match.c auth.c conffile.c
+DOCS = exact.8
 MISC = configure mkinstalldirs install-sh aclocal.m4
-OBJS = tail.o daemon.o exact.o debugmsg.o match.o auth.o conffile.o
+OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o
 
 all: exact exact.conf
 
 install: all
-	$(top_srcdir)/mkinstalldirs $(bindir)
-	$(INSTALL) exact $(bindir)/exact
+	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact $(localstatedir)/state/exact $(mandir)/man8
+	chown $(username) $(localstatedir)/run/exact $(localstatedir)/state/exact
+	chgrp $(groupname) $(localstatedir)/run/exact $(localstatedir)/state/exact
+	$(INSTALL) exact $(sbindir)/exact
+	$(INSTALL) exact.conf $(sysconfdir)/exact.conf
+	$(INSTALL) exact.8 $(mandir)/man8
 
 uninstall:
 	/bin/rm -f $(bindir)/exact
 
-exact: $(OBJS)
+exact: $(OBJS) Makefile
 	$(CC) $(CFLAGS) -o exact $(OBJS) $(LIBS)
 
 clean:
-	/bin/rm -f core *.o $(OBJS) $(LIB_OBJS) exact exact.conf
+	/bin/rm -f core *.o $(OBJS) $(LIB_OBJS) exact exact.conf exact.8
 
 distclean: clean
 	/bin/rm -f Makefile config.h config.status config.cache config.log
@@ -58,10 +66,17 @@ maintainer-clean: clean
 edit = sed \
         -e 's,@datadir\@,$(pkgdatadir),g' \
         -e 's,@prefix\@,$(prefix),g' \
-		-e 's,@localstatedir\@,$(localstatedir),g'
+		-e 's,@localstatedir\@,$(localstatedir),g' \
+		-e 's,@ac_cv_user\@,$(username),g' \
+		-e 's,@ac_cv_group\@,$(groupname),g' \
+		-e 's,@ac_cv_watch\@,$(watchfile),g'
 
 exact.conf: exact.conf.in Makefile
 	rm -f exact.conf exact.conf.tmp
 	$(edit) exact.conf.in > exact.conf.tmp
 	 mv exact.conf.tmp exact.conf
 	
+exact.8: exact.8.in
+	rm -f exact.8 exact.8.tmp
+	$(edit) exact.8.in > exact.8.tmp
+	mv exact.8.tmp exact.8

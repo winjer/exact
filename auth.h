@@ -1,5 +1,7 @@
-/* $Id: auth.h,v 1.2 2003/01/22 19:27:33 doug Exp $
+/* $Id: auth.h,v 1.3 2003/01/24 13:59:45 doug Exp $
 */
 
+void auth_dump(int);
 void auth_init();
-int auth_add(char *username, char *ip);
+void auth_add(char *username, char *ip);
+void auth_write();

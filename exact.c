@@ -1,4 +1,4 @@
-// $Id: exact.c,v 1.6 2003/01/23 12:34:43 doug Exp $
+// $Id: exact.c,v 1.7 2003/01/24 13:59:45 doug Exp $
 //
 
 #include <stdio.h>
@@ -9,9 +9,10 @@
 #include <assert.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #include "tail.h"
-#include "debugmsg.h"
+#include "logger.h"
 #include "match.h"
 #include "conffile.h"
 #include "auth.h"
@@ -20,9 +21,8 @@
 
 typedef struct {
 	int foreground;
-	int verbose;
-	int debug;
 	int sleep;
+	int debug;
 } command_line;
 
 command_line cmd;
@@ -48,32 +48,28 @@ void cmdline(int argc, char *argv[]) {
 	int c;
 
 	cmd.foreground=0;
-	cmd.verbose=0;
+	cmd.sleep=0;
 	cmd.debug=0;
 	while(1) {
 		int option_index=0;
 		static struct option long_options[] = {
 			{"foreground",	0,	NULL, 'f'},
-			{"verbose",	0,	NULL, 'v'},
-			{"debug", 0, NULL, 'd'},
 			{"sleep", 0, NULL, 's'},
+			{"debug", 0, NULL, 'd'},
 			{0,0,0,0}
 		};
-		c=getopt_long(argc,argv,"sfvd",long_options, &option_index);
+		c=getopt_long(argc,argv,"sfd",long_options, &option_index);
 		if(c==-1)
 			break;
 		switch(c) {
 			case 'f':
 				cmd.foreground=1;
 				break;
-			case 'v':
-				cmd.verbose=1;
+			case 's':
+				cmd.sleep=1;
 				break;
 			case 'd':
 				cmd.debug=1;
-				break;
-			case 's':
-				cmd.sleep=1;
 				break;
 			default:
 				fprintf(stderr, "Unknown argument: %c\n",c);
@@ -93,7 +89,7 @@ void checkpid() {
 		if(opid) {
 			int kr=kill(opid,0);
 			if(kr	!= -1) {
-				debugmsg(DMSG_STANDARD, "Exact is already running, with pid %d\n", opid);
+				logger(LOG_ERR, "Exact is already running, with pid %d\n", opid);
 				exit(5);
 			}
 		}
@@ -103,35 +99,50 @@ void checkpid() {
 void writepid() {
 	FILE *f=fopen(conffile_param("pidfile"),"w");
 	if(!f) {
-		debugmsg(DMSG_STANDARD, "Cannot write to pid file %s\n", conffile_param("pidfile"));
+		logger(LOG_ERR, "Cannot write to pid file %s\n", conffile_param("pidfile"));
 		exit(2);
 	}
-	debugmsg(DMSG_SYSTEM, "Writing pid to %s\n", conffile_param("pidfile"));
+	chmod(conffile_param("pidfile"),0640);
+	logger(LOG_DEBUG, "Writing pid to %s\n", conffile_param("pidfile"));
 	fprintf(f,"%d",getpid());
 	fclose(f);
 }
 
 void exit_handler(int s) {
 	unlink(conffile_param("pidfile"));
-	debugmsg(DMSG_STANDARD, "Terminated\n");
+	unlink(conffile_param("authfile"));
+	logger(LOG_ERR, "terminated\n");
 	exit(0);
 }
 
 int main(int argc, char *argv[]) {
+	char cfile[1024];
 	cmdline(argc,argv);
-	conffile_read("exact.conf");
+	logger_init(0,cmd.debug);
+	sprintf(cfile, "%s/exact.conf", CONFDIR);
+	if(!conffile_read(cfile)) {
+		fprintf(stderr, "Could not read configuration file %s\n", cfile);
+		exit(6);
+	}
 	conffile_check();
 	checkpid();
 	auth_init();
 	match_init();
-	if(!cmd.foreground)
-		daemonize(cmd.sleep);
+	daemonize(cmd.foreground, cmd.sleep);
+	if(!cmd.foreground) {
+		logger_init(1,0); // use syslog, never debug with syslog!
+	} else {
+		logger_init(0,cmd.debug); // use stderr
+	}
 	writepid();
+	auth_write(); // so that the file exists
 	signal(15,exit_handler);
+	signal(10,auth_dump);
 	if(!tail_open(conffile_param("maillog"))) {
-		debugmsg(DMSG_STANDARD,"Tail open failed.  Quitting.\n");
+		logger(LOG_ERR,"tail open failed.  Quitting.\n");
 		return 2;
 	}
+	logger(LOG_NOTICE, "running\n");
 	while(1) {
 		onepass();
 	}

@@ -1,11 +1,65 @@
-# EXACT: EXperimental Access Control Thing
-# $Id: exact.conf.in,v 1.1 2003/01/23 13:03:33 doug Exp $
+##
+## exact.conf -- EXACT daemon configuration file
+##
 
-pidfile			@localstatedir@/exact.pid
-maillog			/var/log/mail.log
+#
+# This configuration file specifies the various things needed by EXACT to
+# function.
+#
+
+
+# 
+# user: the username the EXACT daemon should run under.  It is strongly
+# recommended that you run this in a mail group, or something similar, and allow
+# access to the appropriate system logs to that group.  See the SECURITY
+# document distributed with EXACT.
+#
+user			@ac_cv_user@
+
+#
+# group: the group the EXACT daemon should use.
+#
+group			@ac_cv_group@
+
+#
+# pidfile: the daemon will write it's process id to this file, to allow it to be
+# controlled.
+#
+pidfile			@localstatedir@/run/exact/exact.pid
+
+#
+# maillog: this is the file the daemon watches.
+#
+maillog			@ac_cv_watch@
+
+#
+# match: the regular expression used to identify the user and ip address to
+# authenticate.
+#
+# The first bracketed expression should be the username, and the second should
+# be the ip address.  This is standard POSIX regular expression.
+#
 match			Login user=\([^ ]*\).*\[\(.*\)\]
-authfile		@localstatedir@/relay
-logfile			@localstatedir@/exact.log
-loglevel		4
+
+#
+# authfile: the file the ip addresses to allow relay for are written to
+#
+authfile		@localstatedir@/state/exact/relay
+
+#
+# dumpfile: if you send the exact process a SIGUSR1, it will dump it's state 
+# table to this file
+dumpfile		@localstatedir@/state/exact/dump
+
+#
+# timeout: the number of seconds before an ip address is removed from the relay
+# file.
+#
 timeout			1800
-flush			60
+
+#
+# flush: the period, in seconds, between flush cycles.  The daemon checks this
+# often to see if ip addresses should be removed, if they are older than
+# (timeout) seconds.
+#
+flush			300

@@ -1,0 +1,38 @@
+.TH "exact" 8
+.SH NAME
+exact \- smtp relay authentication based on previous pop or imap authentication
+.SH SYNOPSIS
+.B exact [ options ]
+.SH DESCRIPTION
+
+Often you may wish to allow selecting SMTP relaying, based on a user having
+previously authenticated against an IMAP or POP server.  Although this is a bit
+of a kluge, it is popular because it provides simple configuration for users.
+
+This daemon watches the logs produced by IMAP or POP files (by default @ac_cv_watch) 
+for lines indicating
+a user's successful authentication.  If a user successfully authenticates, then
+their IP address is added to a list of addresses from which relaying should be
+allowed.
+
+This list is periodically cleaned of old entries.
+.SH PERFORMANCE
+
+Some care has been taken to make this software perform well for high volume sites.
+
+.TP
+.B \-f
+run in the foreground, rather than running as a daemon.
+.TP
+.B \-d
+produce copious debugging output.  Only has effect when the daemon is running in
+the foreground.
+.SH "SEE ALSO"
+exim(8), imapd(8), ipopd(8)
+.SH BUGS
+foo
+.SH AUTHOR
+Doug Winter <doug@pigeonhold.com>
+.SH LICENSE
+This software is released under the GNU General Public License
+

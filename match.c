@@ -1,4 +1,4 @@
-/* $Id: match.c,v 1.2 2003/01/22 19:27:33 doug Exp $
+/* $Id: match.c,v 1.3 2003/01/24 13:59:45 doug Exp $
 */
 
 #include <sys/types.h>
@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "match.h"
-#include "debugmsg.h"
+#include "logger.h"
 #include "conffile.h"
 
 #define MATCH_MAX 100
@@ -24,14 +24,14 @@ match_login *match_line(char *buff) {
 	static match_login l;
 	regmatch_t r[MATCH_MAX];
 	int m,i;
-	debugmsg(DMSG_SYSTEM, "Matching against %s\n", buff);
+	logger(LOG_DEBUG, "Matching against %s\n", buff);
 	m=regexec(&patbuf,buff,MATCH_MAX,r,0);
 	switch(m) {
 		case 0:
-			debugmsg(DMSG_USEFUL, "Matched\n");
+			logger(LOG_DEBUG, "Matched\n");
 			for(i=0;i<MATCH_MAX;++i) {
 				if(r[i].rm_so!=-1) {
-					debugmsg(DMSG_USEFUL, "Match between %d and %d\n", 
+					logger(LOG_DEBUG, "Match between %d and %d\n", 
 							r[i].rm_so, r[i].rm_eo);
 				}
 			}
@@ -56,10 +56,10 @@ match_login *match_line(char *buff) {
 			return(&l);
 			break;
 		case REG_NOMATCH:
-			debugmsg(DMSG_USEFUL, "No match\n");
+			logger(LOG_DEBUG, "No match\n");
 			break;
 		case REG_ESPACE:
-			debugmsg(DMSG_STANDARD, "Out of space while matching\n");
+			logger(LOG_ERR, "Out of space while matching\n");
 			exit(2);
 		default:
 			assert(0);
