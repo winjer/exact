@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.8 2003/01/26 11:47:36 doug Exp $
+/* $Id: tail.c,v 1.9 2003/02/14 10:26:40 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -35,6 +35,16 @@ time_t 			last;
 char			*tail_buff;
 unsigned int	tail_bufflen;
 
+// taken from comp.unix.questions FAQ
+// http://www.faqs.org/faqs/unix-faq/faq/part4/
+// used to avoid usleep/SIGALRM issues
+int nap(long usec){
+	struct timeval tv;
+	tv.tv_sec = usec / 1000000L;
+	tv.tv_usec = usec % 1000000L;
+	return(select(0,NULL,NULL,NULL,&tv));
+}
+
 int tail_open() {
 	f=fopen(conffile_param("maillog"),"r");
 	last=time(NULL);
@@ -60,6 +70,10 @@ void tail_reopen(long current) {
 	fclose(f);
 	logger(LOG_DEBUG,"suspicious about file, reopening\n");
 	f=fopen(conffile_param("maillog"),"r");
+	if(!f) {
+		logger(LOG_NOTICE, "log file has disappeared.\n");
+		exit(73);
+	}
 	fseek(f,0,SEEK_END);
 	end=ftell(f);
 	if(end<current) {  // the file has been rotated
@@ -83,7 +97,7 @@ char *tail_read() {
 	unsigned int lines;
 
 	logger(LOG_DEBUG, "sleeping for %ld usecs\n", paws);
-	usleep(paws);
+	nap(paws);
 	current=ftell(f);
 	if(fseek(f,0,SEEK_END)==-1) {
 		logger(LOG_ERR, "Unable to seek to end of logfile\n");

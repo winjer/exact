@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.16 2003/01/26 19:08:39 doug Exp $
+# $Id: Makefile.in,v 1.17 2003/02/14 10:26:40 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -45,9 +45,9 @@ username = @ac_cv_user@
 groupname = @ac_cv_group@
 watchfile = @ac_cv_watch@
 
-SOURCES = tail.c daemon.c exact.c logger.c match.c auth.c conffile.c getopt.c
+SOURCES = tail.c daemon.c exact.c logger.c match.c auth.c conffile.c getopt.c getopt1.c
 MISC = configure mkinstalldirs install-sh aclocal.m4
-OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o getopt.o
+OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o getopt.o getopt1.o
 
 all: exact exact.conf exact.8 exact.conf.5 README.html
 

@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.7 2003/01/26 11:47:36 doug Exp $
+/* $Id: auth.c,v 1.8 2003/02/14 10:26:40 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -131,7 +131,7 @@ void auth_add(char *username, char *hostname) {
 	auth_entry *e;
 	e=auth_present(hostname);
 	if(e) {
-		logger(LOG_NOTICE, "updating timout for %s at %s\n", username, hostname);
+		logger(LOG_NOTICE, "updating timeout for %s at %s\n", username, hostname);
 		e->t=time(NULL);
 	} else {
 		logger(LOG_NOTICE, "authorising %s at %s\n", username, hostname);
@@ -158,10 +158,12 @@ void auth_clean(int sig) {
 	int n=0;
 	time_t t=time(NULL);
 	time_t max=(time_t)conffile_param_int("timeout");
+	logger(LOG_NOTICE, "cleaning state tables\n");
 	logger(LOG_DEBUG,"Starting cleaning cycle\n");
 	for(i=0;i<auth_cur;++i) {
 		if(t-auth[i].t<max) {
-			strncpy(shadow_auth[n].hostname, auth[i].hostname, MATCH_LOGIN_HOSTNAME_MAX);
+			strncpy(shadow_auth[n].hostname, auth[i].hostname, 
+					MATCH_LOGIN_HOSTNAME_MAX);
 			shadow_auth[n].t=auth[i].t;
 			n++;
 		} else {

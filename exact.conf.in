@@ -36,11 +36,11 @@ maillog			@ac_cv_watch@
 # match: the regular expression used to identify the user and ip address to
 # authenticate.
 #
-# The first bracketed expression should be the username and the second the hostname. 
+# The first bracketed expression should be the username and the second the IP address. 
 #
 # The default expression is correct for the University of Washington IMAP server.
 #
-match			\(Login\|Authenticated\) user=\([^ ]*\) host=\([^ ]*\)
+match			\(Login\|Auth\|Authenticated\) user=\([^ ]*\).*\[\([^ ]*\)\]
 
 #
 # authfile: the file the ip addresses to allow relay for are written to

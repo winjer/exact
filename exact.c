@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.12 2003/01/26 19:08:39 doug Exp $
+/* $Id: exact.c,v 1.13 2003/02/14 10:26:40 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -68,6 +68,14 @@ int onepass() {
 	return 0;
 }
 
+void usage() {
+	fprintf(stderr,"Usage: exact [-h] [-d] [-f]\n");
+	fprintf(stderr,"       -h | --help         show this usage information\n");
+	fprintf(stderr,"       -d | --debug        more than you ever want to know\n");
+	fprintf(stderr,"       -f | --foreground   don't background\n");
+	fprintf(stderr,"see the manual page exact(8) for more information\n");
+}
+
 void cmdline(int argc, char *argv[]) {
 	int c;
 
@@ -77,15 +85,19 @@ void cmdline(int argc, char *argv[]) {
 	while(1) {
 		int option_index=0;
 		static struct option long_options[] = {
+			{"help", 0, NULL, 'h'},
 			{"foreground",	0,	NULL, 'f'},
 			{"sleep", 0, NULL, 's'},
 			{"debug", 0, NULL, 'd'},
 			{0,0,0,0}
 		};
-		c=getopt_long(argc,argv,"sfd",long_options, &option_index);
+		c=getopt_long(argc,argv,"hsfd",long_options, &option_index);
 		if(c==-1)
 			break;
 		switch(c) {
+			case 'h':
+				usage();
+				exit(0);
 			case 'f':
 				cmd.foreground=1;
 				break;
@@ -97,6 +109,7 @@ void cmdline(int argc, char *argv[]) {
 				break;
 			default:
 				fprintf(stderr, "Unknown argument: %c\n",c);
+				usage();
 				exit(40);
 				break;
 		}
@@ -129,7 +142,7 @@ void writepid() {
 	}
 	chmod(conffile_param("pidfile"),0640);
 	logger(LOG_DEBUG, "Writing pid to %s\n", conffile_param("pidfile"));
-	fprintf(f,"%d",getpid());
+	fprintf(f,"%d",(int)getpid());
 	fclose(f);
 }
 

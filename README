@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.0
+:Version: 1.10
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/01/26 17:17:14 $
+:Date: $Date: 2003/02/14 10:26:40 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -20,10 +20,9 @@ this file.  I also believe it will work with Sendmail_ and Postfix_ without
 problems, however I haven't tried these yet.  If you get this working, please
 send_ me your working configurations so I can include them here.
 
-It doesn't support qmail_ as-is, because qmail would require an additional
-program to configure the environment for it.  I plan to support this at some
-point - again, if you get this working please send_ me your software.  See below
-for some other software that might help though.
+It doesn't support qmail_ as-is, because qmail is rather unique.  If you get
+this working please send_ me your software, so I can include it, or include a
+reference to it.  See below for some other software that might help though.
 
 .. _Exim: http://www.exim.org
 .. _Postfix: http://www.postfix.org
@@ -31,13 +30,19 @@ for some other software that might help though.
 .. _qmail: http://cr.yp.to/qmail.html
 .. _send: mailto:doug@pigeonhold.com
 
+Why is it called EXACT?
+=======================
+
+EXACT stands for EXperimental Access Control Thing.  With apologies to Philip
+Hazel.  Yes it is a crap name, thank you.
+
 What is "POP Before SMTP Relay Authentication"?
 ===============================================
 
 POP Before SMTP Relay Authentication is commonly used on systems that provide
 both IMAP or POP services and SMTP services.  If you have users who move from
 system to system, and access their mail over IMAP or POP, it is a fair bet that
-they will also want to send mail.  
+they will also want to send mail via your IMAP server.  
 
 If your users are using Windows they probably don't have a locally installed
 mail relay, so they have to use someone elses.  Also, some (broken) sites refuse
@@ -73,16 +78,17 @@ allowed to relay.
 Where do I download EXACT?
 ==========================
 
-The current version of EXACT is 1.00 and is available from the `ftp site`_.
+The current version of EXACT is 1.01 and is available for download_.
 
-.. _`ftp site`: ftp://www.britishsteal.com/exact/
+.. _download: http://www.britishsteal.com/dist/exact/exact-1.01.tar.gz
 
 What other software does this?
 ==============================
 
-I couldn't find anything that suited my needs perfectly, which is why I wrote
-this.  DRAC_ performs the same task, using patched IMAP and POP servers.  I
-didn't like this approach and haven't tried it, however YMMV.
+DRAC_ performs the same task, using patched IMAP and POP servers.  I didn't
+like this approach and haven't tried it, however YMMV.
+
+popbsmtp_ uses the same technique as EXACT, and is written in Perl.
 
 There are also some perl scripts_ available from some other guy called Doug_
 available, that work with exim pretty easily (although they do require tweaking)
@@ -94,6 +100,7 @@ For qmail, smtp-poplock_ works well.
 .. _scripts: http://cc.ysu.edu/~doug/exim-pop.tar.Z
 .. _Doug: http://cc.ysu.edu/~doug/
 .. _smtp-poplock: http://www.davideous.com/smtp-poplock/
+.. _popbsmtp: http://popbsmtp.sourceforge.net/
 
 How do I make it work with my MTA?
 ==================================
@@ -103,24 +110,11 @@ Exim
 
 This is very simple to implement in Exim.  Add a line like:
 
-host_accept_relay = 127.0.0.1:lsearch;/var/state/exact/relay
+``host_accept_relay = 127.0.0.1:net-lsearch;/var/state/exact/relay``
 
-where /var/state/exact/relay is the location of the relay file written by exact.
+where ``/var/state/exact/relay`` is the location of the relay file written by 
+exact.  net-lsearch specifies that it will search that file for IP addresses.
 
-You may wish to add +allow_unknown as an option to this line, so it becomes:
-
-host_accept_relay = +allow_unknown:127.0.0.1:lsearch;/var/state/exact/relay
-
-However, I really don't recommend it.  It allows hosts to authenticate if they
-are not in the reverse DNS.  This is obviously bad, because it could potentially
-provide access to spammers.  Unfortunately the reverse DNS is woefully
-incomplete, because many DNS administrators are incompetent or lazy and don't
-maintain their reverse DNS.  This means the sites cannot be authenticated by
-hostname, which is all that exim supports.
-
-It would be really nice to be able to configure exim to authenticate based on IP
-address, but I don't believe this is possible.  If I'm wrong, I'd love to know
-how.
 
 What's all the funny syntax in this file?
 =========================================
@@ -154,3 +148,4 @@ along with EXACT; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 .. _`GNU General Public License`: http://www.gnu.org/licenses/gpl.txt
+

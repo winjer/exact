@@ -1,4 +1,4 @@
-/* $Id: logger.c,v 1.3 2003/01/24 15:32:24 doug Exp $
+/* $Id: logger.c,v 1.4 2003/02/14 10:26:40 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -36,7 +36,7 @@ void logger_init(int u, int d) {
 	static char name[255];
 	use_syslog=u;
 	debug=d;
-	sprintf(name, "exact[%d]", getpid());
+	sprintf(name, "exact[%d]", (int)getpid());
 	if(use_syslog) 
 		openlog(name, 0, LOG_MAIL);
 	logger(LOG_DEBUG, "Running in debug mode\n");

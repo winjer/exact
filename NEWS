@@ -1,0 +1,20 @@
+
+EXACT 1.10
+
+Amended it to use IP addresses in the relay file - this is better if you have
+clients who have no reverse DNS.
+
+Added usage information.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.01
+
+ipop3d uses "Auth" instead of "Authenticated" in it's log message.  Added this 
+to the default configuration file.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.00
+
+Initial Release
