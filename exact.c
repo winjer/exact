@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.15 2003/05/20 16:38:38 doug Exp $
+/* $Id: exact.c,v 1.16 2003/05/20 16:41:08 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -174,9 +174,9 @@ int main(int argc, char *argv[]) {
     conffile_read();
     conffile_check();
     checkpid();
-    auth_init();
     match_init();
     daemonize(cmd.foreground, cmd.sleep);
+    auth_init();
     if(!strcmp("syslog",conffile_param("logging")))
         use_syslog=1;
     else {
