@@ -1,0 +1,98 @@
+##
+## exact.conf -- EXACT daemon configuration file
+##
+
+#
+# This configuration file specifies the various things needed by EXACT to
+# function.
+#
+
+
+# 
+# user: the username the EXACT daemon should run under.  It is strongly
+# recommended that you run this in a mail group, or something similar, and allow
+# access to the appropriate system logs to that group.  See the SECURITY
+# document distributed with EXACT.
+#
+user			@ac_cv_user@
+
+#
+# group: the group the EXACT daemon should use.
+#
+group			@ac_cv_group@
+
+#
+# pidfile: the daemon will write it's process id to this file, to allow it to be
+# controlled.
+#
+pidfile			@localstatedir@/run/exact/exact.pid
+
+#
+# maillog: this is the file the daemon watches.
+#
+maillog			@ac_cv_watch@
+
+#
+# order: the order of parameters in the following match expression.
+#
+# valid values are "username,address" or "address,username"
+#
+# uw-imapd:
+# order           username,address
+# 
+# cyrus:
+order           address,username
+
+#
+# match: the regular expression used to identify the user and ip address to
+# authenticate.
+#
+# uw-imapd:
+# match			(Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
+#
+# cyrus:
+match           (login): \[([0-9\.]*)\] ([^ ]*)
+
+#
+# authfile: the file the ip addresses to allow relay for are written to
+#
+authfile		@localstatedir@/state/exact/relay
+
+#
+# authtemp: a temporary file for writing the relay data to.  This is then moved
+# to "authfile" atomically, to avoid race conditions.  This should be on the
+# same disk as "authfile".
+authtemp		@localstatedir@/state/exact/relay.tmp
+
+#
+# dumpfile: if you send the exact process a SIGUSR1, it will dump it's state 
+# table to this file
+dumpfile		@localstatedir@/state/exact/dump
+
+#
+# timeout: the number of seconds before an ip address is removed from the relay
+# file.
+#
+timeout			@timeout@
+
+#
+# flush: the period, in seconds, between flush cycles.  The daemon checks this
+# often to see if ip addresses should be removed, if they are older than
+# (timeout) seconds.
+#
+flush			@flush@
+
+#
+# suspicious: the time, in seconds, for which an unchanged logfile will trigger 
+# a reopen.  this is designed to detect rotated logfiles.
+#
+suspicious		@suspicious@
+
+#
+# logging: either "syslog" or "internal".  defaults to syslog.  if "internal",
+# then logs are written to the file specified by the "logfile" parameter.
+logging			@logging@
+
+#
+# logfile: if logging is internal, the filename of the log file.
+logfile			@localstatedir@/log/exact/exact.log
