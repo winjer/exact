@@ -1,0 +1,11 @@
+# EXACT: EXperimental Access Control Thing
+# $Id: exact.conf.in,v 1.1 2003/01/23 13:03:33 doug Exp $
+
+pidfile			@localstatedir@/exact.pid
+maillog			/var/log/mail.log
+match			Login user=\([^ ]*\).*\[\(.*\)\]
+authfile		@localstatedir@/relay
+logfile			@localstatedir@/exact.log
+loglevel		4
+timeout			1800
+flush			60
