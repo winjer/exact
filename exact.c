@@ -1,4 +1,4 @@
-// $Id: exact.c,v 1.2 2003/01/22 17:19:10 doug Exp $
+// $Id: exact.c,v 1.3 2003/01/22 18:18:49 doug Exp $
 //
 
 #include <stdio.h>
@@ -8,6 +8,7 @@
 #include "tail.h"
 #include "debugmsg.h"
 #include "match.h"
+#include "conffile.h"
 
 int onepass() {
 	int i;
@@ -31,8 +32,9 @@ int onepass() {
 }
 
 int main(int argc, char *argv[]) {
+	conffile_read("exact.conf");
 	match_init();
-	if(!tail_open("foo.log")) {
+	if(!tail_open(conffile_param("maillog"))) {
 		debugmsg(DMSG_STANDARD,"Tail open failed.  Quitting.\n");
 		return 2;
 	}

@@ -1,16 +1,20 @@
-/* $Id: debugmsg.c,v 1.1 2003/01/22 12:04:21 doug Exp $
+/* $Id: debugmsg.c,v 1.2 2003/01/22 18:18:49 doug Exp $
 */
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "config.h"
+#include "conffile.h"
 
-int debugmsg(int level, char *fmt, ...) {
+void debugmsg(int level, char *fmt, ...) {
 #ifdef HAVE_VPRINTF
-	va_list ap;
-	va_start(ap,fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
+	if(level<=conffile_param_int("loglevel")) {
+		va_list ap;
+		va_start(ap,fmt);
+		vfprintf(stderr, fmt, ap);
+		va_end(ap);
+	}
 #endif
 }

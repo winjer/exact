@@ -15,7 +15,7 @@ AR_FLAGS = rc
 RANLIB = @RANLIB@
 
 CC= @CC@
-CFLAGS = -I. @CFLAGS@
+CFLAGS = -Wall -I. @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 INSTALL = @INSTALL@
@@ -25,10 +25,10 @@ bindir = $(exec_prefix)/bin
 libdir = $(prefix)/lib
 infodir = $(prefix)/info
 
-SOURCES = tail.c daemon.c exact.c debugmsg.c match.c auth.c
+SOURCES = tail.c daemon.c exact.c debugmsg.c match.c auth.c conffile.c
 DOCS = exact.man
 MISC = configure mkinstalldirs install-sh aclocal.m4
-OBJS = tail.o daemon.o exact.o debugmsg.o match.o auth.o
+OBJS = tail.o daemon.o exact.o debugmsg.o match.o auth.o conffile.o
 
 all: exact
 
