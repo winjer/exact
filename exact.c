@@ -1,15 +1,18 @@
-// $Id: exact.c,v 1.4 2003/01/22 19:27:33 doug Exp $
+// $Id: exact.c,v 1.5 2003/01/22 19:49:46 doug Exp $
 //
 
 #include <stdio.h>
 #include <sys/types.h>
 #include <regex.h>
 
+#include <getopt.h>
+
 #include "tail.h"
 #include "debugmsg.h"
 #include "match.h"
 #include "conffile.h"
 #include "auth.h"
+#include "daemon.h"
 
 int onepass() {
 	int i;
@@ -32,6 +35,7 @@ int main(int argc, char *argv[]) {
 	conffile_read("exact.conf");
 	auth_init();
 	match_init();
+	//daemonize();
 	if(!tail_open(conffile_param("maillog"))) {
 		debugmsg(DMSG_STANDARD,"Tail open failed.  Quitting.\n");
 		return 2;
