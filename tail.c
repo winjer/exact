@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.12 2003/05/25 18:38:47 doug Exp $
+/* $Id: tail.c,v 1.13 2003/09/01 18:12:10 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -157,6 +157,8 @@ char *tail_read() {
 	if(lines>0) {
 		// try and read one line per pause
 		paws=paws/lines;
+        // integer arithmetic issues
+        if(paws==0) paws=1;
 	} else {
 		// exponential back off to a maximum
 		paws=paws*2; 

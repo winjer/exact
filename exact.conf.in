@@ -51,7 +51,7 @@ maillog			@ac_cv_watch@
 # Cyrus
 # =====
 # order           address,username
-# match           (login): \[([0-9\.]*)\] ([^ ]*)
+# match           (login):.*\[([0-9\.]*)\] ([^ ]*)
 #
 # Perdition
 # =========
@@ -62,6 +62,11 @@ maillog			@ac_cv_watch@
 # =======
 # order           username,address
 # match           (login) by user \"(.*)\" at \([^ ]*\) (.*) \[[^ ]*\]
+#
+# TeaPOP
+# ======
+# order           username,address
+# match           (Successful login for) (.*).*\[([0-9\.]*)\]$
 
 #
 # authfile: the file the ip addresses to allow relay for are written to

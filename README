@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.35
+:Version: 1.38
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/07/06 17:19:27 $
+:Date: $Date: 2003/09/01 18:12:10 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -16,7 +16,7 @@ What is EXACT?
 EXACT is a program that implements "POP Before SMTP Relay Authentication".  
 
 It will work as is with UW-IMAPD_, Cyrus_, Courier_ (IMAPD and POPD),
-Perdition_, Qpopper_, Exim_ and Sendmail_. Configuration instructions are provided in
+Perdition_, Qpopper_, TeaPOP_, Exim_ and Sendmail_. Configuration instructions are provided in
 this file.  
 
 I believe EXACT should work as-is with a number of other POP, IMAP and SMTP
@@ -36,6 +36,7 @@ reference to it.  See below for some other software that might help though.
 .. _Courier: http://www.courier-mta.org/
 .. _Perdition: http://www.vergenet.net/linux/perdition/
 .. _Qpopper: http://www.eudora.com/qpopper/
+.. _TeaPOP: http://www.toontown.org/teapop/
 .. _Exim: http://www.exim.org
 .. _Sendmail: http://www.sendmail.org
 .. _qmail: http://cr.yp.to/qmail.html
@@ -89,9 +90,9 @@ allowed to relay.
 Where can I get EXACT?
 ======================
 
-The current version of EXACT is 1.35 and is available for download_.
+The current version of EXACT is 1.38 and is available for download_.
 
-.. _download: http://www.britishsteal.com/dist/exact/exact-1.35.tar.gz
+.. _download: http://www.britishsteal.com/dist/exact/exact-1.38.tar.gz
 
 There is also a `mailing list`_ for announcements.
 
@@ -140,7 +141,7 @@ Cyrus
 The lines you need are::
 
     order           address,username
-    match           (login): \[([0-9\.]*)\] ([^ ]*)
+    match           (login):.*\[([0-9\.]*)\] ([^ ]*)
 
 Perdition
 ---------
@@ -230,6 +231,7 @@ suggestions:
     - Jeremy Zawodny
     - Johan Vansant
     - Blair Harrison
+    - Mikhail Goussev
 
 License
 =======

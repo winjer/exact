@@ -10,7 +10,7 @@ previously authenticated against an IMAP or POP server.  Although this is a bit
 of a kluge, it is popular because it provides simple configuration for users.
 
 This daemon watches the logs produced by IMAP or POP files (by default
-@ac_cv_watch) for lines indicating a user's successful authentication.  If a
+@ac_cv_watch@) for lines indicating a user's successful authentication.  If a
 user successfully authenticates, then their IP address is added to a list of
 addresses from which relaying should be allowed.
 

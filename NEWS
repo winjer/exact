@@ -1,4 +1,23 @@
-$Id: NEWS,v 1.6 2003/07/06 17:19:27 doug Exp $ 
+$Id: NEWS,v 1.7 2003/09/01 18:12:10 doug Exp $ 
+
+EXACT 1.38
+
+Ilia Kuliev reported a bug in the cyrus regular expression, which stopped it working when hosts had PTR records.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.37
+
+James Harper reported a bug in the delay calculations which meant that the 
+process could sometimes start thrashing and would never stop.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.36
+
+Added support for TEAPOP
+
+--------------------------------------------------------------------------------
 
 EXACT 1.35
 
