@@ -1,4 +1,4 @@
-/* $Id: tail.h,v 1.4 2003/01/24 15:32:24 doug Exp $
+/* $Id: tail.h,v 1.5 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -21,5 +21,5 @@
 extern char *tail_buff;
 extern unsigned int tail_bufflen;
 
-int tail_open(char *filename);
+int tail_open();
 char *tail_read();

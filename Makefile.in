@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.12 2003/01/24 15:46:41 doug Exp $
+# $Id: Makefile.in,v 1.13 2003/01/26 11:47:36 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -95,3 +95,7 @@ exact.8: exact.8.in
 	rm -f exact.8 exact.8.tmp
 	$(edit) exact.8.in > exact.8.tmp
 	mv exact.8.tmp exact.8
+
+README.html: README
+	python2.2 html.py clickwrap.txt > clickwrap.html
+

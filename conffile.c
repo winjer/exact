@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.6 2003/01/24 15:32:24 doug Exp $
+/* $Id: conffile.c,v 1.7 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -16,6 +16,14 @@
  * along with EXACT; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ */
+
+/* conffile: a simple set of functions to parse and maintain configuration
+ * file data.
+ *
+ * the configuration file consists of lines of name value pairs, separated 
+ * by one or more whitespace characters.  comments are indicated by a hash 
+ * ('#') symbol.
  */
 
 #include <stdio.h>
@@ -47,15 +55,16 @@ void zap_comments(char *s) {
 
 void conffile_check() {
 	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile","authtemp"};
-	char *required_i[]={"timeout","flush"};
+	char *required_i[]={"timeout","flush","suspicious"};
 	int i;
+	logger(LOG_DEBUG, "checking configuration file\n");
 	for(i=0;i<6;++i) {
 		if(!conffile_param(required_s[i])) {
 			logger(LOG_ERR,"Fatal Error: missing parameter %s\n", required_s[i]);
 			exit(4);
 		}
 	}
-	for(i=0;i<2;++i) {
+	for(i=0;i<3;++i) {
 		if(!conffile_param(required_i[i])) {
 			logger(LOG_ERR,"Fatal Error: missing parameter %s\n", required_i[i]);
 			exit(4);
@@ -65,6 +74,7 @@ void conffile_check() {
 			exit(4);
 		}
 	}
+	logger(LOG_DEBUG, "checking configuration file finished\n");
 }
 
 int conffile_read(char *filename) {
@@ -95,7 +105,8 @@ int conffile_read(char *filename) {
 			param_max++;
 		}
 	}
-	//fclose(f);
+	fclose(f);
+	logger(LOG_DEBUG,"Finished reading configuration file\n");
 	return 1;
 }
 

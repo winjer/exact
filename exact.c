@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.9 2003/01/24 15:32:24 doug Exp $
+/* $Id: exact.c,v 1.10 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -111,6 +111,7 @@ void checkpid() {
 			}
 		}
 	}
+	logger(LOG_DEBUG, "exact is not already running\n");
 }
 
 void writepid() {
@@ -151,11 +152,12 @@ int main(int argc, char *argv[]) {
 	} else {
 		logger_init(0,cmd.debug); // use stderr
 	}
+	logger(LOG_DEBUG, "daemonized");
 	writepid();
 	auth_write(); // so that the file exists
 	signal(15,exit_handler);
 	signal(10,auth_dump);
-	if(!tail_open(conffile_param("maillog"))) {
+	if(!tail_open()) {
 		logger(LOG_ERR,"tail open failed.  Quitting.\n");
 		return 2;
 	}

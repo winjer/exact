@@ -38,7 +38,9 @@ maillog			@ac_cv_watch@
 #
 # The first bracketed expression should be the username and the second the hostname. 
 #
-match			Login user=\([^ ]*\).*host=\([^ ]*\)
+# The default expression is correct for the University of Washington IMAP server.
+#
+match			\(Login\|Authenticated\) user=\([^ ]*\) host=\([^ ]*\)
 
 #
 # authfile: the file the ip addresses to allow relay for are written to
@@ -68,3 +70,10 @@ timeout			1800
 # (timeout) seconds.
 #
 flush			300
+
+#
+# suspicious: the time, in seconds, for which an unchanged logfile will trigger 
+# a reopen.  this is designed to detect rotated logfiles.
+#
+suspicious		120
+

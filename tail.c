@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.7 2003/01/24 15:32:24 doug Exp $
+/* $Id: tail.c,v 1.8 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -22,18 +22,22 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <time.h>
 
+#include "conffile.h"
 #include "logger.h"
 
 #define PAWS_MAX (1 * 1000000)
 
-FILE *f;
-unsigned long paws; // useconds
-char *tail_buff;
-unsigned int  tail_bufflen;
+FILE 			*f;
+unsigned long	paws; // useconds
+time_t 			last;
+char			*tail_buff;
+unsigned int	tail_bufflen;
 
-int tail_open(char *filename) {
-	f=fopen(filename,"r");
+int tail_open() {
+	f=fopen(conffile_param("maillog"),"r");
+	last=time(NULL);
 	paws=PAWS_MAX;
 	if(f) {
 		fseek(f,0,SEEK_END);
@@ -51,6 +55,28 @@ int linecount(char *buff, int len) {
 	return(ctr);
 }
 
+void tail_reopen(long current) {
+	long end;
+	fclose(f);
+	logger(LOG_DEBUG,"suspicious about file, reopening\n");
+	f=fopen(conffile_param("maillog"),"r");
+	fseek(f,0,SEEK_END);
+	end=ftell(f);
+	if(end<current) {  // the file has been rotated
+		logger(LOG_DEBUG,"the file has been rotated.\n");
+		if(fseek(f,0,SEEK_SET)==-1) {
+			logger(LOG_ERR, "Unable to seek to beginning of logfile\n");
+			exit(71);
+		}
+	} else { // it hasn't
+		logger(LOG_DEBUG, "the file hasn't been rotated\n");
+		if(fseek(f,current,SEEK_SET)==-1) {
+			logger(LOG_ERR, "Unable to seek to end of logfile\n");
+			exit(71);
+		}
+	}
+}
+
 char *tail_read() {
 	long current,end;
 	size_t read;
@@ -60,11 +86,21 @@ char *tail_read() {
 	usleep(paws);
 	current=ftell(f);
 	if(fseek(f,0,SEEK_END)==-1) {
-		perror("exact");
+		logger(LOG_ERR, "Unable to seek to end of logfile\n");
+		exit(71);
 	}
 	end=ftell(f);
 	if(fseek(f,current,SEEK_SET)==-1) {
-		perror("exact");
+		logger(LOG_ERR, "Unable to seek to current position\n");
+		exit(72);
+	}
+	if(end>current)
+		last=time(NULL);
+	if(time(NULL) - last > conffile_param_int("suspicious")) {
+		tail_reopen(current);
+		last=time(NULL);
+		tail_bufflen=0;
+		return tail_buff;
 	}
 	tail_bufflen=end-current;
 	logger(LOG_DEBUG,"%ld bytes added to file\n", tail_bufflen);

@@ -1,4 +1,4 @@
-/* $Id: match.c,v 1.5 2003/01/24 15:32:24 doug Exp $
+/* $Id: match.c,v 1.6 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -30,6 +30,11 @@
 
 #define MATCH_MAX 100
 
+/* the positions within the match array that indicate the
+ * username and hostname */
+#define MATCH_USERNAME_POS 2
+#define MATCH_HOSTNAME_POS 3
+
 regex_t patbuf;
 
 int match_init() {
@@ -52,24 +57,24 @@ match_login *match_line(char *buff) {
 							r[i].rm_so, r[i].rm_eo);
 				}
 			}
-			strncpy(l.username,buff+r[1].rm_so,
-					r[1].rm_eo-r[1].rm_so > 
+			strncpy(l.username,buff+r[MATCH_USERNAME_POS].rm_so,
+					r[MATCH_USERNAME_POS].rm_eo-r[MATCH_USERNAME_POS].rm_so > 
 						MATCH_LOGIN_USERNAME_MAX ? 
 						MATCH_LOGIN_USERNAME_MAX : 
-						r[1].rm_eo-r[1].rm_so);
-			l.username[(r[1].rm_eo-r[1].rm_so >
+						r[MATCH_USERNAME_POS].rm_eo-r[MATCH_USERNAME_POS].rm_so);
+			l.username[(r[MATCH_USERNAME_POS].rm_eo-r[MATCH_USERNAME_POS].rm_so >
 						MATCH_LOGIN_USERNAME_MAX ?
 						MATCH_LOGIN_USERNAME_MAX :
-						r[1].rm_eo-r[1].rm_so)]=0;
-			strncpy(l.hostname,buff+r[2].rm_so,
-					r[2].rm_eo-r[2].rm_so > 
+						r[MATCH_USERNAME_POS].rm_eo-r[MATCH_USERNAME_POS].rm_so)]=0;
+			strncpy(l.hostname,buff+r[MATCH_HOSTNAME_POS].rm_so,
+					r[MATCH_HOSTNAME_POS].rm_eo-r[MATCH_HOSTNAME_POS].rm_so > 
 						MATCH_LOGIN_HOSTNAME_MAX ? 
 						MATCH_LOGIN_HOSTNAME_MAX : 
-						r[2].rm_eo-r[2].rm_so);
-			l.hostname[(r[2].rm_eo-r[2].rm_so >
+						r[MATCH_HOSTNAME_POS].rm_eo-r[MATCH_HOSTNAME_POS].rm_so);
+			l.hostname[(r[MATCH_HOSTNAME_POS].rm_eo-r[MATCH_HOSTNAME_POS].rm_so >
 						MATCH_LOGIN_HOSTNAME_MAX ?
 						MATCH_LOGIN_HOSTNAME_MAX :
-						r[2].rm_eo-r[2].rm_so)]=0;
+						r[MATCH_HOSTNAME_POS].rm_eo-r[MATCH_HOSTNAME_POS].rm_so)]=0;
 			return(&l);
 			break;
 		case REG_NOMATCH:

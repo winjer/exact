@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.6 2003/01/24 15:46:41 doug Exp $
+/* $Id: auth.c,v 1.7 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -182,9 +182,11 @@ void auth_clean(int sig) {
 /* auth_init: set up the auth tables.
  */
 void auth_init() {
+	logger(LOG_DEBUG, "initialising authentication tables\n");
 	auth_init_mem();
 	auth_alarm=conffile_param_int("flush");
 	signal(14, auth_clean);
 	alarm(auth_alarm);
+	logger(LOG_DEBUG, "authentication tables initialised\n");
 }
 

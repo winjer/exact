@@ -1,4 +1,4 @@
-/* $Id: daemon.c,v 1.7 2003/01/24 15:32:24 doug Exp $
+/* $Id: daemon.c,v 1.8 2003/01/26 11:47:36 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -71,9 +71,9 @@ void rootdir() {
 }
 
 void reopenfds() {
-	freopen("/dev/null", "r", stdin);
-	fclose(stdout);
-	fclose(stderr);
+	close(0);
+	close(1);
+	//close(2);
 }
 
 void usergroup() {
@@ -108,14 +108,20 @@ void usergroup() {
 
 void daemonize(int f, int s) {
 #ifdef HAVE_WORKING_FORK
+	logger(LOG_DEBUG, "changing user and group\n");
 	usergroup(); // change to appropriate user and group
 	if(!f) {
+		logger(LOG_DEBUG, "forking\n");
 		dofork(0); // so the parent can exit, returning control
 		sesslead(); // become a process group and session group leader
+		logger(LOG_DEBUG, "forking\n");
 		dofork(s); // session group leader exits.  we can never regain terminal.
 	}
+	logger(LOG_DEBUG, "changing dir\n");
 	rootdir(); // to ensure no directory is kept in use
+	logger(LOG_DEBUG, "setting umask\n");
 	umask(0); // so no weird perms are inherited
+	logger(LOG_DEBUG, "freopening\n");
 	reopenfds(); // so stdin, stdout and stderr are sensible
 #else
 	// other stuff
