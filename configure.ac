@@ -16,5 +16,7 @@ AC_PROG_RANLIB
 
 # Checks for library functions.
 
+AC_FUNC_FORK
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
