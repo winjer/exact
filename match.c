@@ -1,4 +1,4 @@
-/* $Id: match.c,v 1.6 2003/01/26 11:47:36 doug Exp $
+/* $Id: match.c,v 1.7 2003/01/26 19:08:39 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -38,7 +38,6 @@
 regex_t patbuf;
 
 int match_init() {
-	patbuf.regs_allocated=REGS_UNALLOCATED;
 	return(regcomp(&patbuf, conffile_param("match"),0));
 }
 
