@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.12 2003/05/25 10:18:22 doug Exp $
+# $Id: configure.ac,v 1.13 2003/05/25 18:38:47 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -17,6 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 AC_INIT(exact, 1.10, doug@pigeonhold.com)
+AC_PREREQ(2.57)
 AC_CONFIG_SRCDIR([tail.c])
 
 AC_CONFIG_HEADER([config.h])
@@ -44,11 +45,11 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
+AC_HEADER_TIME
 AC_CHECK_HEADERS([syslog.h] [getopt.h])
 AC_CHECK_HEADERS([libintl.h])
 AC_CHECK_HEADERS([wchar.h])
 AC_CHECK_HEADERS([sys/time.h])
-AC_HEADER_TIME
 
 # Checks for typedefs, structures, and compiler characteristics.
 
@@ -66,6 +67,8 @@ AC_CHECK_FUNCS([alarm])
 AC_CHECK_FUNCS([memset])
 AC_CHECK_FUNCS([select])
 AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_FUNC_SELECT_ARGTYPES
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

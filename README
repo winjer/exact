@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.32
+:Version: 1.33
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/05/25 10:21:40 $
+:Date: $Date: 2003/05/25 18:38:47 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -88,9 +88,9 @@ allowed to relay.
 Where can I get EXACT?
 ======================
 
-The current version of EXACT is 1.32 and is available for download_.
+The current version of EXACT is 1.33 and is available for download_.
 
-.. _download: http://www.britishsteal.com/dist/exact/exact-1.32.tar.gz
+.. _download: http://www.britishsteal.com/dist/exact/exact-1.33.tar.gz
 
 There is also a `mailing list`_ for announcements.
 

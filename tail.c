@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.11 2003/05/25 10:18:22 doug Exp $
+/* $Id: tail.c,v 1.12 2003/05/25 18:38:47 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+#include "config.h" /* autoconf generated */
 
 #include <stdlib.h>
 #include <unistd.h>
