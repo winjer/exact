@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.19 2003/05/20 16:38:38 doug Exp $
+# $Id: Makefile.in,v 1.20 2003/05/20 16:44:40 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -29,6 +29,8 @@ AR = ar
 AR_FLAGS = rc
 RANLIB = @RANLIB@
 
+DESTDIR =
+
 CC= @CC@
 CFLAGS = -Wall -I. -DCONFDIR=\"@sysconfdir@\" @CFLAGS@
 LDFLAGS = @LDFLAGS@
@@ -52,17 +54,17 @@ OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o getopt.o getop
 all: exact exact.conf exact.8 exact.conf.5 README.html
 
 install: all
-	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact \
-		$(localstatedir)/state/exact $(mandir)/man8 $(mandir)/man5
-	chown $(username) $(localstatedir)/run/exact $(localstatedir)/state/exact
-	chgrp $(groupname) $(localstatedir)/run/exact $(localstatedir)/state/exact
-	$(INSTALL) exact $(sbindir)/exact
-	$(INSTALL) exact.conf $(sysconfdir)/exact.conf
-	$(INSTALL) exact.8 $(mandir)/man8
-	$(INSTALL) exact.conf.5 $(mandir)/man5
+	$(top_srcdir)/mkinstalldirs $(DESTDIR)/$(sbindir) $(DESTDIR)/$(sysconfdir) $(DESTDIR)/$(localstatedir)/run/exact \
+		$(DESTDIR)/$(localstatedir)/state/exact $(DESTDIR)/$(mandir)/man8 $(DESTDIR)/$(mandir)/man5
+	chown $(username) $(DESTDIR)/$(localstatedir)/run/exact $(DESTDIR)/$(localstatedir)/state/exact
+	chgrp $(groupname) $(DESTDIR)/$(localstatedir)/run/exact $(DESTDIR)/$(localstatedir)/state/exact
+	$(INSTALL) exact $(DESTDIR)/$(sbindir)/exact
+	$(INSTALL) exact.conf $(DESTDIR)/$(sysconfdir)/exact.conf
+	$(INSTALL) exact.8 $(DESTDIR)/$(mandir)/man8
+	$(INSTALL) exact.conf.5 $(DESTDIR)/$(mandir)/man5
 
 uninstall:
-	/bin/rm -f $(bindir)/exact
+	/bin/rm -f $(DESTDIR)/$(bindir)/exact
 
 exact: $(OBJS) Makefile
 	$(CC) $(CFLAGS) -o exact $(OBJS) $(LIBS)

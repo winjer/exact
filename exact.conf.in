@@ -37,7 +37,7 @@ maillog			@ac_cv_watch@
 #
 # valid values are "username,address" or "address,username"
 #
-# uw-imapd:
+# uw-imapd, courier:
 order           username,address
 # 
 # cyrus or perdition:
@@ -55,6 +55,9 @@ match			(Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]$
 #
 # perdition:
 # match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
+
+# courier
+# match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
 
 
 

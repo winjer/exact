@@ -5,7 +5,7 @@ README for EXACT
 :Version: 1.32
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/05/20 16:38:38 $
+:Date: $Date: 2003/05/20 16:44:40 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -15,8 +15,9 @@ What is EXACT?
 
 EXACT is a program that implements "POP Before SMTP Relay Authentication".  
 
-It will work as is with UW-IMAPD_, Cyrus_, Perdition_, Exim_ and Sendmail_.
-Configuration instructions are provided in this file.  
+It will work as is with UW-IMAPD_, Cyrus_, Courier (IMAPD and POPD),
+Perdition_, Exim_ and Sendmail_. Configuration instructions are provided in
+this file.  
 
 I believe EXACT should work as-is with a number of other POP, IMAP and SMTP
 implementations - and I'm happy to adapt the software to work with these if
@@ -32,6 +33,7 @@ reference to it.  See below for some other software that might help though.
 
 .. _UW-IMAPD: http://www.washington.edu/imap/
 .. _Cyrus: http://asg.web.cmu.edu/cyrus/imapd/
+.. _Courier-IMAP: http://www.courier-mta.org/
 .. _Perdition: http://www.vergenet.net/linux/perdition/
 .. _Exim: http://www.exim.org
 .. _Sendmail: http://www.sendmail.org
@@ -147,6 +149,13 @@ The lines you need are::
     order           address,username
     match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
 
+Courier
+-------
+
+The lines you need are::
+
+    order           username,address
+    match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
 
 How do I make it work with my MTA?
 ==================================
