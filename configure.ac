@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.11 2003/02/14 10:26:40 doug Exp $
+# $Id: configure.ac,v 1.12 2003/05/25 10:18:22 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -47,6 +47,7 @@ AC_PROG_RANLIB
 AC_CHECK_HEADERS([syslog.h] [getopt.h])
 AC_CHECK_HEADERS([libintl.h])
 AC_CHECK_HEADERS([wchar.h])
+AC_CHECK_HEADERS([sys/time.h])
 AC_HEADER_TIME
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.8 2003/02/14 10:26:40 doug Exp $
+/* $Id: auth.c,v 1.9 2003/05/25 10:18:22 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -27,7 +27,6 @@
  *
  */
 
-#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -35,6 +34,17 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if TIME_WITH_SYS_TIME
+#    include <sys/time.h>
+#    include <time.h>
+#else
+#    if HAVE_SYS_TIME_H
+#        include <sys/time.h>
+#    else
+#        include <time.h>
+#    endif
+#endif
 
 #include "logger.h"
 #include "conffile.h"

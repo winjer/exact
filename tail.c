@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.10 2003/02/19 20:27:15 doug Exp $
+/* $Id: tail.c,v 1.11 2003/05/25 10:18:22 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -22,7 +22,19 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
-#include <time.h>
+
+/* autoconf default include instructions */
+
+#if TIME_WITH_SYS_TIME
+#    include <sys/time.h>
+#    include <time.h>
+#else
+#    if HAVE_SYS_TIME_H
+#        include <sys/time.h>
+#    else
+#        include <time.h>
+#    endif
+#endif
 
 #include "conffile.h"
 #include "logger.h"
