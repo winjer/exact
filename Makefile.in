@@ -25,10 +25,10 @@ bindir = $(exec_prefix)/bin
 libdir = $(prefix)/lib
 infodir = $(prefix)/info
 
-SOURCES = tail.c daemon.c exact.c debugmsg.c
+SOURCES = tail.c daemon.c exact.c debugmsg.c match.c auth.c
 DOCS = exact.man
 MISC = configure mkinstalldirs install-sh aclocal.m4
-OBJS = tail.o daemon.o exact.o debugmsg.o
+OBJS = tail.o daemon.o exact.o debugmsg.o match.o auth.o
 
 all: exact
 

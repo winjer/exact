@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.2 2003/01/22 12:04:21 doug Exp $
+/* $Id: tail.c,v 1.3 2003/01/22 17:19:10 doug Exp $
  *
  * These functions provide functionality very like that provided
  * in the perl File::Tail module.
@@ -11,11 +11,12 @@
 
 #include "debugmsg.h"
 
-#define PAWS_MAX 10000000
+#define PAWS_MAX (1 * 1000000)
 
 FILE *f;
 unsigned long paws; // useconds
-char *buff;
+char *tail_buff;
+unsigned int  tail_bufflen;
 
 int tail_open(char *filename) {
 	f=fopen(filename,"r");
@@ -35,7 +36,7 @@ int linecount(char *buff, int len) {
 char *tail_read() {
 	long current,end;
 	size_t read;
-	unsigned int len,lines;
+	unsigned int lines;
 
 	debugmsg(DMSG_USEFUL, "sleeping for %ld usecs\n", paws);
 	usleep(paws);
@@ -47,21 +48,22 @@ char *tail_read() {
 	if(fseek(f,current,SEEK_SET)==-1) {
 		perror("exact");
 	}
-	len=end-current;
-	debugmsg(DMSG_SYSTEM,"%ld bytes added to file\n", len);
-	if(len>0) {
-		buff=(char *)realloc(buff,len);
+	tail_bufflen=end-current;
+	debugmsg(DMSG_SYSTEM,"%ld bytes added to file\n", tail_bufflen);
+	if(tail_bufflen>0) {
+		tail_buff=(char *)realloc(tail_buff,tail_bufflen+1);
 	}
-	if(!buff) {
-		debugmsg(DMSG_STANDARD,"unable to realloc %d bytes\n", len);
+	if(!tail_buff) {
+		debugmsg(DMSG_STANDARD,"unable to realloc %d bytes\n", tail_bufflen);
 		exit(2);
 	}
-	read=fread(buff,1,len,f);
-	if(read!=len) {
-		debugmsg(DMSG_STANDARD,"read %d bytes, wanted %d bytes\n", read, len);
+	read=fread(tail_buff,1,tail_bufflen,f);
+	if(read!=tail_bufflen) {
+		debugmsg(DMSG_STANDARD,"read %d bytes, wanted %d bytes\n", read, tail_bufflen);
 		exit(2);
 	}
-	lines=linecount(buff,len);
+	tail_buff[tail_bufflen]='\0'; // zero terminate it, so it can be matched
+	lines=linecount(tail_buff,tail_bufflen);
 	debugmsg(DMSG_USEFUL, "read %d lines with a pause of %ld usecs\n", lines, paws);
 	if(lines>0) {
 		// try and read one line per pause
@@ -71,5 +73,5 @@ char *tail_read() {
 		paws=paws*2; 
 		paws=paws > PAWS_MAX ? PAWS_MAX : paws;
 	}
-	return(buff);
+	return(tail_buff);
 }
