@@ -35,7 +35,7 @@ DOCS = exact.8
 MISC = configure mkinstalldirs install-sh aclocal.m4
 OBJS = tail.o daemon.o exact.o logger.o match.o auth.o conffile.o
 
-all: exact exact.conf
+all: exact exact.conf exact.8
 
 install: all
 	$(top_srcdir)/mkinstalldirs $(sbindir) $(sysconfdir) $(localstatedir)/run/exact $(localstatedir)/state/exact $(mandir)/man8
