@@ -1,3 +1,42 @@
+EXACT 1.32
+
+Fixed security hole in the uw-imapd regular expression, spotted by Jorey Bump.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.31
+
+Added support for perdition.
+Clarified the tail open debug message.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.30
+
+Added configuration option so it will work with Cyrus.
+
+--------------------------------------------------------------------------------
+
+EXACT 1.20
+
+Fixed exact's behaviour when the watch file is missing - now, if the file is
+missing, it will continue checking for the files existence until it reappears.
+This seems to be the best way of handling this condition.
+
+Fixed a problem on Solaris to do with discrepancies between POSIX standard
+regular expression handling.  Some standard that is.  Now uses Extended regular
+expressions, which seem to be more portable.  Thanks to Jeremy Zawodny for
+reporting this.
+
+Added some new functionality to support regression testing:
+    
+    * specify the configuration file on the command line
+    * enable broken out logfile location, so regression logs don't
+      go to syslog
+    * moved all constants from exact.conf into the Makefile, so the regression
+      configuration can have shorter timeouts easily
+
+--------------------------------------------------------------------------------
 
 EXACT 1.10
 

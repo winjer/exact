@@ -17,8 +17,7 @@ echo building in $builddir
 mkdir -p $builddir
 
 SRCS="*.c *.h Makefile.in configure install-sh mkinstalldirs config.h.in exact.8.in exact.conf.in exact.conf.5.in"
-SRCS="$SRCS README README.html INSTALL NEWS regress"
-SRCS="$SRCS tr1 tr2 tr3 td1-1 td2-1 td2-2"
+SRCS="$SRCS README README.html INSTALL NEWS"
 
 cp $SRCS $builddir/
 ( cd $tmpdir && tar -czf exact-$version.tar.gz exact-$version )

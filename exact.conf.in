@@ -33,14 +33,30 @@ pidfile			@localstatedir@/run/exact/exact.pid
 maillog			@ac_cv_watch@
 
 #
+# order: the order of parameters in the following match expression.
+#
+# valid values are "username,address" or "address,username"
+#
+# uw-imapd:
+order           username,address
+# 
+# cyrus or perdition:
+# order           address,username
+
+#
 # match: the regular expression used to identify the user and ip address to
 # authenticate.
 #
-# The first bracketed expression should be the username and the second the IP address. 
+# uw-imapd:
+match			(Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]$
 #
-# The default expression is correct for the University of Washington IMAP server.
+# cyrus:
+# match           (login): \[([0-9\.]*)\] ([^ ]*)
 #
-match			\(Login\|Auth\|Authenticated\) user=\([^ ]*\).*\[\([^ ]*\)\]
+# perdition:
+# match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
+
+
 
 #
 # authfile: the file the ip addresses to allow relay for are written to

@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.10
+:Version: 1.32
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/02/19 20:27:15 $
+:Date: $Date: 2003/05/20 16:38:38 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -15,17 +15,25 @@ What is EXACT?
 
 EXACT is a program that implements "POP Before SMTP Relay Authentication".  
 
-It will work as is with Exim_, and configuration instructions are provided in
-this file.  I also believe it will work with Sendmail_ and Postfix_ without
-problems, however I haven't tried these yet.  If you get this working, please
-send_ me your working configurations so I can include them here.
+It will work as is with UW-IMAPD_, Cyrus_, Perdition_, Exim_ and Sendmail_.
+Configuration instructions are provided in this file.  
+
+I believe EXACT should work as-is with a number of other POP, IMAP and SMTP
+implementations - and I'm happy to adapt the software to work with these if
+necessary.  Please let me know if you get EXACT working with other
+implementations, or if you think changes to EXACT are required.
+
+If you get this working, please send_ me your working configurations so I can
+include them here.
 
 It doesn't support qmail_ as-is, because qmail is rather unique.  If you get
 this working please send_ me your software, so I can include it, or include a
 reference to it.  See below for some other software that might help though.
 
+.. _UW-IMAPD: http://www.washington.edu/imap/
+.. _Cyrus: http://asg.web.cmu.edu/cyrus/imapd/
+.. _Perdition: http://www.vergenet.net/linux/perdition/
 .. _Exim: http://www.exim.org
-.. _Postfix: http://www.postfix.org
 .. _Sendmail: http://www.sendmail.org
 .. _qmail: http://cr.yp.to/qmail.html
 .. _send: mailto:doug@pigeonhold.com
@@ -34,7 +42,7 @@ Why is it called EXACT?
 =======================
 
 EXACT stands for EXperimental Access Control Thing.  With apologies to Philip
-Hazel.  Yes it is a crap name, thank you.
+Hazel.  As you may have guessed, marketing is not my strong suit.
 
 What is "POP Before SMTP Relay Authentication"?
 ===============================================
@@ -75,12 +83,16 @@ are cleaned from this file.
 Your MTA can then be configured to read this file, to determine hosts that are
 allowed to relay.
 
-Where do I download EXACT?
-==========================
+Where can I get EXACT?
+======================
 
-The current version of EXACT is 1.01 and is available for download_.
+The current version of EXACT is 1.32 and is available for download_.
 
-.. _download: http://www.britishsteal.com/dist/exact/exact-1.10.tar.gz
+.. _download: http://www.britishsteal.com/dist/exact/exact-1.32.tar.gz
+
+There is also a `mailing list`_ for announcements.
+
+.. _`mailing list`: http://www.britishsteal.com/mailman/listinfo/exact-announce
 
 What other software does this?
 ==============================
@@ -102,6 +114,40 @@ For qmail, smtp-poplock_ works well.
 .. _smtp-poplock: http://www.davideous.com/smtp-poplock/
 .. _popbsmtp: http://popbsmtp.sourceforge.net/
 
+How do I make it work with my POP/IMAP Server?
+==============================================
+
+Two parameters in the configuration file specify how lines are matched in the
+POP/IMAP server log file, order and match.
+
+The following stanzas are in the configuration file already, although some of
+them are commented out.  Review and alter them as necessary.
+
+UW-IMAPD
+--------
+
+The lines you need are::
+
+    order           username,address
+    match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
+
+Cyrus
+-----
+
+The lines you need are::
+
+    order           address,username
+    match           (login): \[([0-9\.]*)\] ([^ ]*)
+
+Perdition
+---------
+
+The lines you need are::
+
+    order           address,username
+    match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
+
+
 How do I make it work with my MTA?
 ==================================
 
@@ -115,6 +161,28 @@ This is very simple to implement in Exim.  Add a line like:
 where ``/var/state/exact/relay`` is the location of the relay file written by 
 exact.  net-lsearch specifies that it will search that file for IP addresses.
 
+Sendmail
+--------
+
+Here's a tip from Johan Vansant describing how to make EXACT work with
+Sendmail:
+
+In order to have sendmail check an extra file you need to expand the rules.
+Here is what I added to the 'mc' file, this can be added to the 'cf' file
+directly if you leave out the 'LOCAL_CONFIG' and 'LOCAL_RULESETS' lines::
+
+    LOCAL_CONFIG
+    #POP Auth
+    F{POPAuth} /usr/local/var/state/exact/relay
+    
+    SLocal_check_rcpt
+    R<$+ @ $=w >            $@ OK # if it is to domain delivered by us
+    R$+                     $: $(dequote "" $&{client_addr} $) $| $1 # get address
+    R$={POPAuth}$* $| $*    $@ OK # OK if from a POP-authed address
+    ROK                     $@ OK
+    R$*                     $#error $@ 5.5.0 $: "550 Relaying denied: authenticate with POP first"
+
+Thanks Johan :)
 
 What's all the funny syntax in this file?
 =========================================

@@ -1,8 +1,25 @@
 #!/bin/bash
-# $Id: regress,v 1.1 2003/02/19 20:27:15 doug Exp $
+# $Id: regress,v 1.2 2003/05/20 16:38:38 doug Exp $
 # regression test sets for EXACT
 # note: this script isn't portable, and may blow up on you.
 #       it's really designed for my own regression tests.
+
+mkconfig () {
+    
+    # create the regression config file
+    sed -e "s,@datadir\@,$pkgdatadir,g"             \
+        -e "s,@prefix\@,$prefix,g"                  \
+        -e "s,@localstatedir\@,$localstatedir,g"    \
+        -e "s,@ac_cv_user\@,$username,g"            \
+        -e "s,@ac_cv_group\@,$groupname,g"          \
+        -e "s,@ac_cv_watch\@,$watchfile,g"          \
+        -e "s,@logging@,internal,g"                 \
+        -e 's,@timeout\@,180,g'                     \
+        -e 's,@flush\@,30,g'                        \
+        -e 's,@suspicious\@,12,g'                   \
+        < "$1"                                      \
+        > "$regdir/reg.conf"
+}
 
 cleanroom () {
     # remove and create the regression test directory
@@ -20,20 +37,7 @@ cleanroom () {
     export username=`id -un`
     export groupname=`id -gn`
     export watchfile=$regdir/watch
-    
-    # create the regression config file
-    sed -e "s,@datadir\@,$pkgdatadir,g"             \
-        -e "s,@prefix\@,$prefix,g"                  \
-        -e "s,@localstatedir\@,$localstatedir,g"    \
-        -e "s,@ac_cv_user\@,$username,g"            \
-        -e "s,@ac_cv_group\@,$groupname,g"          \
-        -e "s,@ac_cv_watch\@,$watchfile,g"          \
-        -e "s,@logging@,internal,g"                 \
-        -e 's,@timeout\@,180,g'                     \
-        -e 's,@flush\@,30,g'                        \
-        -e 's,@suspicious\@,12,g'                   \
-        < "exact.conf.in"                           \
-        > "$regdir/reg.conf"
+    mkconfig exact.conf.in
 }
 
 report() {
@@ -66,6 +70,22 @@ test1 () {
     report 1
 }
 
+# test with a cyrus type log file
+
+test1a () {
+    echo Starting Test 1a
+    cleanroom
+    mkconfig exact.conf.in.cyrus
+    touch $watchfile
+    ./exact -c $regdir/reg.conf
+    sleep 2
+    cat "td1-2" > $watchfile
+    sleep 10
+    killexact
+    diff t/log/exact/exact.log tr12
+    report 1a
+}
+
 ### Test 2
 #
 # 
@@ -89,7 +109,7 @@ test3 () {
     echo Starting Test 3
     cleanroom
     touch $watchfile
-    ./exact -c $regdir/reg.conf
+    ./exact -pc $regdir/reg.conf
     sleep 2
     cat "td2-1" > $watchfile
     sleep 10
@@ -102,6 +122,17 @@ test3 () {
     report 3
 }
 
-#test1
-#test2
+test4 () {
+    echo Starting Test 4
+    cleanroom
+    rm -f $watchfile
+    ./exact -pc $regdir/reg.conf
+    sleep 2
+}
+
+test1
+test1a
+test2
 test3
+test4
+

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.1 2003/02/19 22:16:25 doug Exp $
+$Id: INSTALL,v 1.2 2003/05/20 16:38:38 doug Exp $
 
 ================
 Installing EXACT
@@ -13,14 +13,27 @@ correct ownership and permissions.  Also watch out for it's rotation - depending
 on your OS different programs might rotate this file, and create it with
 different perms.  I'd be interested in some instructions for this for different
 operating systems, so I can include them here - please send quality configs to
-me.
+me.  I've got a Debian version in the works.
 
-Third, you probably want this program to run on startup, and shut down on boot -
+Third, the configuration file is installed as "exact.conf.dist" in your
+selected configuration directory.  You should copy it to exact.conf and check
+the configuration is correct for your system.  
+
+Fourth, you probably want this program to run on startup, and shut down on boot -
 you will need to write some rc scripts for this.  The canonical versions of
 these vary from unix to unix, so you'll need to sort that out yourself.
 
 Finally, You will need to configure your MTA to use the data produced by this
 software.  There are some instructions in the README.
+
+===============
+Upgrading EXACT
+===============
+
+If you are installing a new version of EXACT, you should note that it will
+OVERWRITE YOUR EXISTING CONFIGURATION FILES.  This shouldn't actually be a real
+problem, since most configuration parameters are specified at compile time
+anyway.
 
 Basic Installation
 ==================

@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.18 2003/02/19 20:27:15 doug Exp $
+# $Id: Makefile.in,v 1.19 2003/05/20 16:38:38 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -72,8 +72,8 @@ clean:
 
 distclean: clean
 	/bin/rm -f Makefile config.h config.status config.cache config.log
-	/bin/rm -f configure autoscan.log configure.scan
-	/bin/rm -rf autom4te.cache config.h.in~ README.html
+	/bin/rm -f autoscan.log configure.scan
+	/bin/rm -rf autom4te.cache config.h.in~
 
 mostlyclean: clean
 
@@ -113,4 +113,5 @@ exact.8: exact.8.in
 README.html: README
 	python2.2 html.py README > README.html
 
-test:; ./regressions
+test: all
+	  ./regress

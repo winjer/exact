@@ -1,4 +1,4 @@
-/* $Id: conffile.c,v 1.9 2003/02/19 20:27:15 doug Exp $
+/* $Id: conffile.c,v 1.10 2003/05/20 16:38:38 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -75,7 +75,8 @@ void conffile_reload(int s) {
 }
 
 void conffile_check() {
-	char *required_s[]={"pidfile","maillog","match","authfile","dumpfile","authtemp","logging","logfile"};
+	char *required_s[]={"pidfile", "maillog", "order", "match", 
+                            "authfile","dumpfile","authtemp","logging","logfile"};
 	char *required_i[]={"timeout","flush","suspicious"};
 	int i;
 	logger(LOG_DEBUG, "checking configuration file\n");
@@ -95,6 +96,11 @@ void conffile_check() {
 			exit(4);
 		}
 	}
+    if(strcmp(conffile_param("order"), "username,address") && 
+        strcmp(conffile_param("order"), "address,username")) {
+            logger(LOG_ERR, "Fatal Error: order %s incorrect\n", conffile_param("order"));
+            exit(4);
+    }
 	logger(LOG_DEBUG, "checking configuration file finished\n");
 }
 
