@@ -1,4 +1,4 @@
-/* $Id: exact.c,v 1.17 2003/09/23 19:20:28 doug Exp $
+/* $Id: exact.c,v 1.18 2004/03/27 13:05:10 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -197,7 +197,12 @@ int main(int argc, char *argv[]) {
         logger(LOG_DEBUG, "Daemonized\n");
     }
     writepid();
-    auth_write(); // so that the file exists
+#ifdef WITH_DB
+    if(!strcmp(conffile_param("authtype"), "text"))
+        auth_write_text(); // so that the file exists
+#else
+    auth_write_text(); // so that the file exists
+#endif
     signal(1,conffile_reload);
     signal(10,auth_dump);
     signal(15,exit_handler);

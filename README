@@ -2,10 +2,10 @@
 README for EXACT
 ================
 
-:Version: 1.38
+:Version: 1.40pre3
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/09/01 18:12:10 $
+:Date: $Date: 2004/03/27 13:05:10 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -15,9 +15,20 @@ What is EXACT?
 
 EXACT is a program that implements "POP Before SMTP Relay Authentication".  
 
-It will work as is with UW-IMAPD_, Cyrus_, Courier_ (IMAPD and POPD),
-Perdition_, Qpopper_, TeaPOP_, Exim_ and Sendmail_. Configuration instructions are provided in
-this file.  
+It will work as is with these POP/IMAP servers:
+
+  * UW-IMAPD_
+  * Cyrus_
+  * Courier_ (IMAPD and POPD)
+  * Perdition_ 
+  * Qpopper_ 
+  * TeaPOP_
+  * Cubic Circle's cucipop_
+  
+and these MTAs:
+
+  * Exim_
+  * Sendmail_
 
 I believe EXACT should work as-is with a number of other POP, IMAP and SMTP
 implementations - and I'm happy to adapt the software to work with these if
@@ -37,6 +48,7 @@ reference to it.  See below for some other software that might help though.
 .. _Perdition: http://www.vergenet.net/linux/perdition/
 .. _Qpopper: http://www.eudora.com/qpopper/
 .. _TeaPOP: http://www.toontown.org/teapop/
+.. _cucipop: http://freshmeat.net/projects/cucipop/?topic_id=34
 .. _Exim: http://www.exim.org
 .. _Sendmail: http://www.sendmail.org
 .. _qmail: http://cr.yp.to/qmail.html
@@ -90,9 +102,16 @@ allowed to relay.
 Where can I get EXACT?
 ======================
 
-The current version of EXACT is 1.38 and is available for download_.
+The current production version of EXACT is 1.38 and is available for download:
 
-.. _download: http://www.britishsteal.com/dist/exact/exact-1.38.tar.gz
+    http://www.britishsteal.com/dist/exact/exact-1.38.tar.gz
+
+The next version of EXACT will be 1.40.  A prerelease of this is available here:
+
+    http://www.britishsteal.com/dist/exact/exact-1.40pre3.tar.gz
+
+This will be the next version.  I'd appreciate anyone willing to install this
+version and confirm it's success, or reporting bugs.
 
 There is also a `mailing list`_ for announcements.
 
@@ -121,52 +140,26 @@ For qmail, smtp-poplock_ works well.
 How do I make it work with my POP/IMAP Server?
 ==============================================
 
-Two parameters in the configuration file specify how lines are matched in the
-POP/IMAP server log file, order and match.
+The exact-servers.conf file contains the necessary configuration for all
+the servers I've tried, or that users have provided configurations for.
 
-The following stanzas are in the configuration file already, although some of
-them are commented out.  Review and alter them as necessary.
+To select the server that you wish to use, just change the 'server' parameter
+in the exact.conf file to match one of the stanzas in exact-servers.conf.  This
+is done automatically by the configure script, when you use the --with-server
+option.
 
-UW-IMAPD
---------
+If your POP/IMAP server isn't listed in exact-servers.conf, you can add your
+own configuration easily if you have some experience of regular expressions.
+The REs used are in Extended POSIX Regular Expression Syntax.
 
-The lines you need are::
+The order parameter can be either 'username,address' or 'address,username' and
+this specifies the order of the parenthesised expressions for those terms that
+will be extracted.  For historical reasons (supporting the weird UW-IMAP
+logging output in fact), these are in fact the **SECOND** and **THIRD**
+parenthesised expressions respectively.  The **FIRST** bracketed expression is
+dropped on the floor.
 
-    order           username,address
-    match           (Login|Auth|Authenticated) user=([^ ]*).*\[([^ ]*)\]
-
-Cyrus
------
-
-The lines you need are::
-
-    order           address,username
-    match           (login):.*\[([0-9\.]*)\] ([^ ]*)
-
-Perdition
----------
-
-The lines you need are::
-
-    order           address,username
-    match           (Auth): ([0-9\.]*)->.*user="([^"]*)"
-
-Courier
--------
-
-The lines you need are::
-
-    order           username,address
-    match           (LOGIN), user=(.*), ip=\[::ffff:(.*)\]
-
-Qpopper
--------
-
-The lines you need are::
-
-    order           username,address
-    match           (login) by user \"(.*)\" at \([^ ]*\) (.*) \[[^ ]*\]
-
+See the examples in the exact-servers.conf file, hopefully it'll make sense.
 
 How do I make it work with my MTA?
 ==================================
@@ -232,6 +225,7 @@ suggestions:
     - Johan Vansant
     - Blair Harrison
     - Mikhail Goussev
+    - Ward Willats
 
 License
 =======

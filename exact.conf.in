@@ -40,7 +40,13 @@ serverdefs      @sysconfdir@/exact-servers.conf
 #
 # server: the server to use, from the serverdefs file
 #
-server          uw-imap
+server          @ac_cv_server@
+
+#
+# authtype: either 'db' or 'text'.  'db' is only valid if you have compiled 
+# in berkeley database support (the --with-db switch to configure)
+#
+authtype        @ac_cv_authtype@
 
 #
 # authfile: the file the ip addresses to allow relay for are written to
@@ -50,7 +56,10 @@ authfile		@localstatedir@/state/exact/relay
 #
 # authtemp: a temporary file for writing the relay data to.  This is then moved
 # to "authfile" atomically, to avoid race conditions.  This should be on the
-# same disk as "authfile".
+# same filesystem as "authfile".
+#
+# this is only used by text type databases
+#
 authtemp		@localstatedir@/state/exact/relay.tmp
 
 #

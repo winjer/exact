@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.2 2003/05/20 16:38:38 doug Exp $
+$Id: INSTALL,v 1.3 2004/03/27 13:05:10 doug Exp $
 
 ================
 Installing EXACT
@@ -7,6 +7,10 @@ Installing EXACT
 Follow the instructions below under "Basic Installation" to configure and
 install this software.  The first bit is the standard ./configure, make, make
 install dance, described below.
+
+For experienced users of configure scripts, skip right down to Optional
+Features - you'll want to read the parts that are specific to this software.
+YOU WILL PROBABLY WANT TO USE THESE CONFIGURE SWITCHES.
 
 Second, ensure the watch log file (that you configured when building) has the
 correct ownership and permissions.  Also watch out for it's rotation - depending
@@ -19,8 +23,8 @@ Third, the configuration file is installed as "exact.conf.dist" in your
 selected configuration directory.  You should copy it to exact.conf and check
 the configuration is correct for your system.  
 
-Fourth, you probably want this program to run on startup, and shut down on boot -
-you will need to write some rc scripts for this.  The canonical versions of
+Fourth, you probably want this program to run on startup, and shut down on boot
+- you will need to write some rc scripts for this.  The canonical versions of
 these vary from unix to unix, so you'll need to sort that out yourself.
 
 Finally, You will need to configure your MTA to use the data produced by this
@@ -142,7 +146,7 @@ option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
 Optional Features
 =================
 
-There are three optional features you may wish to use:
+There are four optional features you may wish to use:
 
 --with-user=user		specify the user the software will run as.
 
@@ -150,6 +154,9 @@ There are three optional features you may wish to use:
 
 --with-watch=filename	specify the name of the log file that the software
 						is to watch for authentication data.
+
+--with-server=server    specify the name of the IMAP server software
+                        you use.
 
 Specifying the System Type
 ==========================

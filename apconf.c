@@ -41,7 +41,8 @@ int line_no;
 char scanner_text[1024];
 
 section *apconf_getsec(apconf *a, char *name) {
-    for(int i=0;i<a->count;++i) {
+    int i;
+    for(i=0;i<a->count;++i) {
         if(!strcmp(name, a->s[i].name)) {
             return &(a->s[i]);
         }
@@ -50,7 +51,8 @@ section *apconf_getsec(apconf *a, char *name) {
 }
 
 int compile_re() {
-    for(int i=0;i<TOKEN_COUNT;i++) {
+    int i;
+    for(i=0;i<TOKEN_COUNT;i++) {
         int ec=regcomp(&token_regex[i], token_string[i], REG_EXTENDED);
         if(ec) {
             char err[1024];
@@ -63,9 +65,10 @@ int compile_re() {
 }
 
 token scan_string(char *s) {
+    int i;
     regmatch_t r[MATCH_MAX];
     compile_re();
-    for(int i=0;i<TOKEN_COUNT;i++) {
+    for(i=0;i<TOKEN_COUNT;i++) {
         int m=regexec(&token_regex[i], s , MATCH_MAX, r, 0);
         if(!m) {
             memset(scanner_text, 0, 1024);

@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.14 2003/09/23 19:20:28 doug Exp $
+# $Id: configure.ac,v 1.15 2004/03/27 13:05:10 doug Exp $
 #
 # This file is part of EXACT.
 #
@@ -16,7 +16,7 @@
 # along with EXACT; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-AC_INIT(exact, 1.10, doug@pigeonhold.com)
+AC_INIT(exact, 1.40, doug@pigeonhold.com)
 AC_PREREQ(2.57)
 AC_CONFIG_SRCDIR([tail.c])
 
@@ -36,6 +36,20 @@ AC_ARG_WITH([watch],
 	AC_HELP_STRING([--with-watch=filename], [set the filename of the logfile to watch (default is /var/log/mail)]),
 	[ac_cv_watch=$withval], [ac_cv_watch=/var/log/mail.log])
 AC_SUBST(ac_cv_watch)
+
+AC_ARG_WITH([server],
+    AC_HELP_STRING([--with-server=servername], [set the type of imap server you use]),
+    [ac_cv_server=$withval], [ac_cv_server=uw-imap])
+AC_SUBST(ac_cv_server)
+
+AC_ARG_WITH([db],
+    AC_HELP_STRING([--with-db], [include berkeley db support]),
+    [ac_cv_db=yes], [ac_cv_db=no])
+AC_SUBST(ac_cv_db)
+
+if test $ac_cv_db = yes; then
+    AC_DEFINE([WITH_DB], [], [With Berkeley DB])
+fi
 
 # Checks for programs.
 AC_PROG_CC

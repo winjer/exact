@@ -1,4 +1,4 @@
-/* $Id: tail.c,v 1.13 2003/09/01 18:12:10 doug Exp $
+/* $Id: tail.c,v 1.14 2004/03/27 13:05:10 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -83,6 +83,8 @@ void tail_reopen(long current) {
 	long end;
 	if(f) fclose(f);
 	logger(LOG_DEBUG,"suspicious about file, reopening\n");
+    // We should really check the file for various exceptional conditions
+    // before opening - check for existence, then permissions, then size
 	f=fopen(conffile_param("maillog"),"r");
 	if(!f) {
 		logger(LOG_NOTICE, "log file '%s' has disappeared.\n",conffile_param("maillog"));
