@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
+#undef HAVE_DOPRNT
+
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
@@ -36,6 +39,9 @@
 /* Define to 1 if you have the <vfork.h> header file. */
 #undef HAVE_VFORK_H
 
+/* Define to 1 if you have the `vprintf' function. */
+#undef HAVE_VPRINTF
+
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
@@ -62,6 +68,9 @@
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
+
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#undef size_t
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork

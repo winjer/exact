@@ -25,10 +25,10 @@ bindir = $(exec_prefix)/bin
 libdir = $(prefix)/lib
 infodir = $(prefix)/info
 
-SOURCES = tail.c daemon.c
+SOURCES = tail.c daemon.c exact.c debugmsg.c
 DOCS = exact.man
 MISC = configure mkinstalldirs install-sh aclocal.m4
-OBJS = tail.o daemon.o
+OBJS = tail.o daemon.o exact.o debugmsg.o
 
 all: exact
 
@@ -43,7 +43,7 @@ exact: $(OBJS)
 	$(CC) $(CFLAGS) -o exact $(OBJS) $(LIBS)
 
 clean:
-	/bin/rm -f core *.o $(OBJS) $(LIB_OBJS)
+	/bin/rm -f core *.o $(OBJS) $(LIB_OBJS) exact
 
 distclean: clean
 	/bin/rm -f Makefile config.h config.status config.cache config.log
