@@ -1,4 +1,4 @@
-/* $Id: match.c,v 1.1 2003/01/22 17:19:10 doug Exp $
+/* $Id: match.c,v 1.2 2003/01/22 19:27:33 doug Exp $
 */
 
 #include <sys/types.h>
@@ -9,6 +9,7 @@
 
 #include "match.h"
 #include "debugmsg.h"
+#include "conffile.h"
 
 #define MATCH_MAX 100
 
@@ -16,7 +17,7 @@ regex_t patbuf;
 
 int match_init() {
 	patbuf.regs_allocated=REGS_UNALLOCATED;
-	return(regcomp(&patbuf, "Login user=\\([^ ]*\\).*\\[\\(.*\\)\\]",0));
+	return(regcomp(&patbuf, conffile_param("match"),0));
 }
 
 match_login *match_line(char *buff) {

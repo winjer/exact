@@ -1,4 +1,4 @@
-// $Id: daemon.c,v 1.1 2003/01/22 10:53:21 doug Exp $
+// $Id: daemon.c,v 1.2 2003/01/22 19:27:33 doug Exp $
 
 #include <config.h>
 
@@ -8,6 +8,6 @@ int daemonize() {
 #else
 	// other stuff
 #endif
-
+	return 0;
 }
 

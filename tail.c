@@ -1,10 +1,10 @@
-/* $Id: tail.c,v 1.3 2003/01/22 17:19:10 doug Exp $
+/* $Id: tail.c,v 1.4 2003/01/22 19:27:33 doug Exp $
  *
  * These functions provide functionality very like that provided
  * in the perl File::Tail module.
 */
 
-
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>

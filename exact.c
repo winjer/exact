@@ -1,4 +1,4 @@
-// $Id: exact.c,v 1.3 2003/01/22 18:18:49 doug Exp $
+// $Id: exact.c,v 1.4 2003/01/22 19:27:33 doug Exp $
 //
 
 #include <stdio.h>
@@ -9,6 +9,7 @@
 #include "debugmsg.h"
 #include "match.h"
 #include "conffile.h"
+#include "auth.h"
 
 int onepass() {
 	int i;
@@ -20,11 +21,7 @@ int onepass() {
 		if(tail_buff[i]=='\n' || tail_buff[i]=='\0') {
 			tail_buff[i]='\0';
 			l=match_line(tail_buff+start);
-			if(l) {
-				debugmsg(DMSG_STANDARD, "User %s authenticated at %s\n",
-					l->username, l->ip);
-					auth_add(l->username, l->ip);				
-			}
+			if(l) auth_add(l->username, l->ip);				
 			start=i+1;
 		}
 	}
@@ -33,6 +30,7 @@ int onepass() {
 
 int main(int argc, char *argv[]) {
 	conffile_read("exact.conf");
+	auth_init();
 	match_init();
 	if(!tail_open(conffile_param("maillog"))) {
 		debugmsg(DMSG_STANDARD,"Tail open failed.  Quitting.\n");
