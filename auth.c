@@ -1,4 +1,4 @@
-/* $Id: auth.c,v 1.5 2003/01/24 15:32:24 doug Exp $
+/* $Id: auth.c,v 1.6 2003/01/24 15:46:41 doug Exp $
  * 
  * This file is part of EXACT.
  *
@@ -18,6 +18,15 @@
  *
  */
 
+/* These functions manage the authentication database.
+ *
+ * The database is an array of hostname and time pairs.  The array is
+ * dynamically sized.  A shadow array is used when cleaning the primary.
+ * Entries in the primary are checked, and if they are still live are copied to
+ * the secondary.
+ *
+ */
+
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,17 +40,26 @@
 #include "conffile.h"
 #include "match.h"
 
+// an entry in the authentication database
 typedef struct auth_entry_str {
 	char	hostname[MATCH_LOGIN_HOSTNAME_MAX];
 	time_t 	t;
 } auth_entry;
 
+// the authentication database
 auth_entry *auth;
+
+// the shadow authentication database
 auth_entry *shadow_auth;
+
 int auth_max=1024;
 int auth_cur=0;
 int auth_alarm=0;
 
+/* auth_dump: dump the current state table to the dump file.
+ *
+ * this is triggered by the receipt of a SIGUSR1
+ */
 void auth_dump(int sig) {
 	int i;
 	FILE *f=fopen(conffile_param("dumpfile"),"w");
@@ -59,10 +77,17 @@ void auth_dump(int sig) {
 	fclose(f);
 }
 
+/* auth_cmp: qsort/bsearch comparison function
+ * doesn't matter what is used really, it's just used to speed up the frequent
+ * checks for presence.  in this case a string comparison is used.
+ */
 int auth_cmp(const void *a, const void *b) {
 	return(strcmp(((auth_entry *)a)->hostname,((auth_entry *)b)->hostname));
 }
 
+/* auth_init_mem: this reallocates the memory requirements based on the current
+ * auth_max value.  auth_max may be changed if auth_cur reaches it
+ */
 void auth_init_mem() {
 	auth=realloc(auth, sizeof(auth_entry)*auth_max);
 	shadow_auth=realloc(shadow_auth, sizeof(auth_entry)*auth_max);
@@ -72,6 +97,8 @@ void auth_init_mem() {
 	}
 }
 
+/* auth_present: check if a host is present in the authentication database
+ */
 auth_entry *auth_present(char *hostname) {
 	auth_entry e;
 	strncpy(e.hostname,hostname, MATCH_LOGIN_HOSTNAME_MAX);
@@ -79,6 +106,9 @@ auth_entry *auth_present(char *hostname) {
 	return((auth_entry *)bsearch(&e,auth,auth_cur, sizeof(auth_entry), auth_cmp));
 }
 
+/* auth_write: write the current live hostnames to the relay temp file, and then
+ * move it to the relay file
+ */
 void auth_write() {
 	int i;
 	FILE *f=fopen(conffile_param("authtemp"),"w");
@@ -94,6 +124,9 @@ void auth_write() {
 	rename(conffile_param("authtemp"),conffile_param("authfile"));
 }
 
+/* auth_add: add an entry to the database.  the username isn't stored.
+ * the database is written after each entry is added.
+ */
 void auth_add(char *username, char *hostname) {
 	auth_entry *e;
 	e=auth_present(hostname);
@@ -114,6 +147,11 @@ void auth_add(char *username, char *hostname) {
 	}
 }
 
+/* auth_clean: remove entries that have expired.  this is done by selectively
+ * copying entries to the shadow buffer, then swapping buffers.
+ *
+ * this process is triggered by the reception of a SIGALRM.  
+ */
 void auth_clean(int sig) {
 	int i;
 	auth_entry *tmp;
@@ -141,6 +179,8 @@ void auth_clean(int sig) {
 	alarm(auth_alarm);
 }
 
+/* auth_init: set up the auth tables.
+ */
 void auth_init() {
 	auth_init_mem();
 	auth_alarm=conffile_param_int("flush");
