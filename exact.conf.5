@@ -1,0 +1,67 @@
+.TH "exact.conf" 5
+.SH NAME
+exact.conf \- exact(8) configuration file
+.SH DESCRIPTION
+The exact configuration file is the only configuration file for 
+.BR exact (5)
+which provides POP-before-SMTP-relay-authentication for unix systems.  This
+file specifies all configuration parameters required for 
+.BR exact 
+to function.
+The file consists of name value pairs, separated by whitespace.  Comments are
+introduced using a hash ('#') character.
+.SH PARAMETERS
+.TP
+.B user
+the username the EXACT daemon should run under.  It is strongly
+recommended that you run this in a mail group, or something similar, and allow
+access to the appropriate system logs to that group.  See the SECURITY
+document distributed with EXACT.  Defaults to mail.
+.TP
+.B group
+the group the EXACT daemon should use.  Defaults to mail
+.TP
+.B pidfile
+the daemon will write it's process id to this file, to allow it to be
+controlled.  Defaults to /usr/local/var/run/exact/exact.pid.
+.TP
+.B maillog
+this is the file the daemon watches.  Defaults to /var/log/mail.log.
+.TP
+.B match
+the regular expression used to identify the user and ip address to
+authenticate.
+The first bracketed expression should be the username and the second the hostname. 
+.TP
+.B authfile
+the file the ip addresses to allow relay for are written to.  Defaults to
+/usr/local/var/state/exact/relay.
+.TP
+.B authtemp
+a temporary file for writing the relay data to.  This is then moved
+to "authfile" atomically, to avoid race conditions.  This should be on the
+same disk as "authfile".  Defaults to /usr/local/var/state/exact/relay.tmp.
+.TP
+.B dumpfile
+if you send the exact process a SIGUSR1, it will dump it's state 
+table to this file.  Defaults to /usr/local/var/state/exact/dump.
+.TP
+.B timeout
+the number of seconds before an ip address is removed from the relay
+file.  Defaults to 1800 seconds (30 minutes).
+.TP
+.B flush
+the period, in seconds, between flush cycles.  The daemon checks this
+often to see if ip addresses should be removed, if they are older than
+(timeout) seconds.  Defaults to 300 (5 minutes).
+.TP
+.B suspicious
+the time, in seconds, for which an unchanged logfile will trigger 
+a reopen.  this is designed to detect rotated logfiles.  Defaults to 120 (2
+minutes).
+.SH "SEE ALSO"
+exact(8)
+.SH AUTHOR
+Doug Winter <doug@pigeonhold.com>
+.SH LICENSE
+This software is released under the GNU General Public License
