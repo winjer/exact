@@ -5,7 +5,7 @@ README for EXACT
 :Version: 1.32
 :Author: Doug Winter
 :Contact: doug@pigeonhold.com
-:Date: $Date: 2003/05/20 16:44:40 $
+:Date: $Date: 2003/05/25 10:21:40 $
 :Web site: http://www.britishsteal.com/dist/exact/
 
 .. contents::
@@ -202,10 +202,20 @@ HTML (and other things) using docutils_.
 
 .. _docutils: http://docutils.sourceforge.net/
 
-Author and Copyright
-====================
+Author, Copyright & Contributions
+=================================
 
 Copyright 2003 Doug Winter <doug@pigeonhold.com>
+
+Many thanks to the following for their help in providing fixes, patches &
+suggestions:
+
+Mike Whitaker
+William Armitage
+Jon R Luini
+Jorey Bump
+Jeremy Zawodny
+Johan Vansant
 
 License
 =======
