@@ -126,7 +126,7 @@ exact.8: exact.8.in
 	mv exact.8.tmp exact.8
 
 README.html: README
-	python2.2 html.py README > README.html
+	python2 html.py README > README.html
 
 test: all
 	  ./regress
