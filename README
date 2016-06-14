@@ -65,7 +65,7 @@ system to system, and access their mail over IMAP or POP, it is a fair bet that
 they will also want to send mail via your IMAP server.  
 
 If your users are using Windows they probably don't have a locally installed
-mail relay, so they have to use someone elses.  Also, some (broken) sites refuse
+mail relay, so they have to use someone else's.  Also, some (broken) sites refuse
 email from dialup systems on the grounds that the email might be spam.
 
 Generally you should send mail through your network providers local SMTP
